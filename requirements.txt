@@ -1,0 +1,6 @@
+pdfplumber 
+pandas
+tabula-py
+openpyxl
+python-dotenv
+google-genai
