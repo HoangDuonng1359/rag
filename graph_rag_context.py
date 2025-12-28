@@ -14,17 +14,14 @@ class ContextBuilder:
     Optimized cho Gemini API
     """
     
-    def __init__(self, max_context_length: int = 8000, source_file: str = "data/chapter10.md"):
+    def __init__(self, max_context_length: int = 8000):
         """
         Initialize context builder
         
         Args:
             max_context_length: Max characters cho context (để avoid token limits)
-            source_file: Path to source markdown file with page content
         """
         self.max_context_length = max_context_length
-        self.source_file = source_file
-        self.page_cache = {}  # Cache để avoid reading file nhiều lần
     
     def build_rag_context(
         self,
@@ -52,9 +49,10 @@ class ContextBuilder:
         entities = retrieval_context['top_entities'][:max_entities]
         relationships = retrieval_context['relationships'][:max_relationships]
         paths = retrieval_context.get('paths', [])[:5] if include_paths else []
+        chunks = retrieval_context.get('chunks', [])  # Lấy chunks từ retrieval context
         
-        # Extract source citations với content
-        sources = self._extract_sources_with_content(entities, include_content=True) if include_sources else []
+        # Extract source citations với content từ chunks
+        sources = self._extract_sources_from_chunks(chunks, entities) if include_sources else []
         
         # Build context sections
         context = {
@@ -118,62 +116,53 @@ class ContextBuilder:
         
         return formatted
     
-    def _load_page_content(self, page_number: int) -> str:
-        """Load nội dung của một page từ source file"""
-        # Check cache
-        if page_number in self.page_cache:
-            return self.page_cache[page_number]
+    def _extract_sources_from_chunks(self, chunks: List[Dict], entities: List[Dict]) -> List[Dict]:
+        """Extract source citations từ chunks và entities"""
+        sources = []
         
-        try:
-            with open(self.source_file, 'r', encoding='utf-8') as f:
-                content = f.read()
+        # Từ chunks (nếu có)
+        seen_sources = set()
+        for chunk in chunks[:5]:  # Limit 5 chunks quan trọng nhất
+            content = chunk.get('content', '')
+            metadata = chunk.get('metadata', {})
             
-            # Extract content for specific page
-            # Pattern: --- Page X --- ... --- Page X+1 ---
-            page_pattern = rf"--- Page {page_number} ---\n(.*?)(?=--- Page {page_number + 1} ---|$)"
-            match = re.search(page_pattern, content, re.DOTALL)
+            law_code = metadata.get('law_code', 'N/A')
+            article = metadata.get('article', 'N/A')
+            chapter = metadata.get('chapter', 'N/A')
+            law_name = metadata.get('law_name', '')
             
-            if match:
-                page_content = match.group(1).strip()
-                self.page_cache[page_number] = page_content
-                return page_content
-            else:
-                return f"[Page {page_number} content not found]"
-        
-        except FileNotFoundError:
-            return f"[Source file not found: {self.source_file}]"
-        except Exception as e:
-            return f"[Error loading page {page_number}: {str(e)}]"
-    
-    def _extract_sources_with_content(self, entities: List[Dict], include_content: bool = True) -> List[Dict]:
-        """Extract unique source citations từ entities kèm theo nội dung page"""
-        sources_dict = {}
-        
-        for entity in entities:
-            # Entities có thể có page info
-            page_key = None
-            if 'page' in entity:
-                page_key = entity['page']
-            elif 'first_seen_page' in entity:
-                page_key = entity['first_seen_page']
-            
-            if page_key and page_key not in sources_dict:
-                chapter = entity.get('chapter', 10)  # Default chapter 10
-                
-                source_info = {
+            source_key = f"{law_code}_art{article}"
+            if source_key not in seen_sources:
+                sources.append({
+                    'law_code': law_code,
+                    'law_name': law_name,
+                    'article': article,
                     'chapter': chapter,
-                    'page': page_key,
-                    'citation': f"Chapter {chapter}, Page {page_key}"
-                }
-                
-                # Load page content nếu cần
-                if include_content:
-                    source_info['content'] = self._load_page_content(page_key)
-                
-                sources_dict[page_key] = source_info
+                    'citation': f"{law_code}, Điều {article}",
+                    'content': content[:1000]  # Limit content length
+                })
+                seen_sources.add(source_key)
         
-        # Sort by page number
-        return sorted(sources_dict.values(), key=lambda x: x['page'])
+        # Nếu không có chunks, lấy từ entities
+        if not sources:
+            for entity in entities[:3]:
+                law_code = entity.get('law_code', 'N/A')
+                article = entity.get('article', 'N/A')
+                
+                if law_code != 'N/A':
+                    source_key = f"{law_code}_art{article}"
+                    if source_key not in seen_sources:
+                        sources.append({
+                            'law_code': law_code,
+                            'law_name': entity.get('law_name', ''),
+                            'article': article,
+                            'chapter': entity.get('chapter', 'N/A'),
+                            'citation': f"{law_code}, Điều {article}",
+                            'content': entity.get('description', '')
+                        })
+                        seen_sources.add(source_key)
+        
+        return sources
     
     def _create_summary(self, entities: List[Dict], relationships: List[Dict]) -> str:
         """Tạo brief summary về context"""
@@ -196,8 +185,6 @@ class ContextBuilder:
         include_instructions: bool = True
     ) -> str:
         """
-        Format context thành prompt cho Gemini
-        
         Args:
             context: Context từ build_rag_context()
             prompt_type: Loại prompt (qa, summary, explain, timeline)
@@ -222,41 +209,42 @@ class ContextBuilder:
         parts = []
         
         if include_instructions:
-            parts.append("""Bạn là một chuyên gia lịch sử Việt Nam. Nhiệm vụ của bạn là trả lời câu hỏi dựa trên thông tin được cung cấp từ knowledge graph.
+            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là trả lời câu hỏi dựa trên thông tin được cung cấp.
 
 HƯỚNG DẪN:
 - Chỉ sử dụng thông tin từ context được cung cấp
-- Trả lời chính xác, ngắn gọn và có căn cứ
+- Trả lời chính xác, có căn cứ
 - Nếu không có đủ thông tin, hãy nói rõ
-- Trích dẫn entities và relationships liên quan trong câu trả lời
-- Đưa ra trang nguồn của tài liệu thông qua dữ liệu được cung cấp
 - Sử dụng tiếng Việt tự nhiên và dễ hiểu
+YÊU CẦU TRẢ LỜI:
+- Trả lời theo dạng đoạn văn mạch lạc
+- Nêu rõ:
+  + Quy định / nội dung chính
+  + Dẫn chứng từ context
+- Cuối câu ghi nguồn: (Nguồn: Điều 1 Bộ Luật Giao Thông Đường Bộ)
+
 """)
         parts.append("CONTEXT:")
         parts.append("")
         
         # Entities section
-        parts.append("ENTITIES (Thực thể):")
+        parts.append("ENTITIES:")
         for i, entity in enumerate(context['entities'], 1):
             parts.append(f"\n{i}. {entity['name']} ({entity['type']})")
             if entity['description']:
                 parts.append(f"   Mô tả: {entity['description']}")
             parts.append(f"   Độ liên quan: {entity['relevance_score']:.3f}")
         
-        parts.append("\n" + "-" * 10)
-        
         # Relationships section
         if context['relationships']:
-            parts.append("\nRELATIONSHIPS (Quan hệ):")
+            parts.append("\nRELATIONSHIPS:")
             for i, rel in enumerate(context['relationships'], 1):
-                arrow = "→" if rel['direction'] == 'outgoing' else "←"
+                arrow = "->" if rel['direction'] == 'outgoing' else "<-"
                 parts.append(f"\n{i}. {rel['source']} {arrow} [{rel['relation']}] {arrow} {rel['target']}")
                 if rel['description']:
                     parts.append(f"   Chi tiết: {rel['description']}")
         
         parts.append("\n" + "-" * 10)
-        
-        # Paths section (if available)
         if context.get('paths'):
             parts.append("\nCONNECTIONS (Kết nối):")
             for i, path in enumerate(context['paths'], 1):
@@ -265,13 +253,13 @@ HƯỚNG DẪN:
         
         parts.append("\n" + "-" * 10)
         
-        # Source content section (NEW!)
+        # Source content section
         if context.get('sources'):
-            parts.append("\nSOURCE CONTENT (Nội dung nguồn):")
+            parts.append("\nSOURCE CONTENT:")
             for i, source in enumerate(context['sources'], 1):
                 parts.append(f"\n{i}. {source['citation']}")
                 if 'content' in source:
-                    parts.append(f"   {source['content'][:800]}...")  # Limit mỗi page
+                    parts.append(f"{source['content'][:1500]}...")  # Limit mỗi page
         
         parts.append("\n" + "-" * 10)
         parts.append(f"\nCÂU HỎI: {context['question']}")
@@ -285,13 +273,13 @@ HƯỚNG DẪN:
         parts = []
         
         if include_instructions:
-            parts.append("""Bạn là một chuyên gia lịch sử Việt Nam. Nhiệm vụ của bạn là tóm tắt thông tin từ dữ liệu sau.
+            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là tóm tắt thông tin từ dữ liệu sau.
 
 HƯỚNG DẪN:
 - Tạo tóm tắt ngắn gọn, súc tích (3-5 câu)
-- Bao gồm các thông tin chính: WHO, WHAT, WHEN, WHERE, WHY
+- Bao gồm các thông tin chính: QUY ĐỊNH, MỨC PHẠT, ĐỐI TƯỢNG ÁP DỤNG
 - Highlight các entities và relationships quan trọng
-- Sử dụng thứ tự thời gian nếu có
+- Sử dụng thứ tự logic nếu có
 - Viết bằng tiếng Việt tự nhiên
 """)
         
@@ -326,12 +314,12 @@ HƯỚNG DẪN:
         parts = []
         
         if include_instructions:
-            parts.append("""Bạn là một chuyên gia lịch sử Việt Nam. Nhiệm vụ của bạn là giải thích mối quan hệ và ngữ cảnh lịch sử.
+            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là giải thích mối quan hệ và bối cảnh pháp lý.
 
 HƯỚNG DẪN:
 - Giải thích rõ ràng mối quan hệ giữa các entities
-- Cung cấp ngữ cảnh lịch sử đầy đủ
-- Phân tích nguyên nhân và hậu quả
+- Cung cấp bối cảnh pháp lý đầy đủ
+- Phân tích quy định và hậu quả
 - Sử dụng ví dụ cụ thể từ context
 - Viết theo phong cách giáo dục, dễ hiểu
 """)
@@ -371,14 +359,14 @@ HƯỚNG DẪN:
         parts = []
         
         if include_instructions:
-            parts.append("""Bạn là một chuyên gia lịch sử Việt Nam. Nhiệm vụ của bạn là tạo timeline các sự kiện.
+            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là tạo danh sách các quy định theo mức độ nghiêm trọng.
 
 HƯỚNG DẪN:
-- Sắp xếp sự kiện theo thứ tự thời gian
-- Ghi rõ năm/thời điểm cho mỗi sự kiện
-- Mô tả ngắn gọn mỗi sự kiện
-- Highlight các mốc quan trọng
-- Format: YYYY - Sự kiện: Mô tả
+- Sắp xếp quy định theo mức phạt hoặc mức độ vi phạm
+- Ghi rõ mức phạt/hình thức xử lý cho mỗi vi phạm
+- Mô tả ngắn gọn mỗi quy định
+- Highlight các điểm quan trọng
+- Format: Vi phạm: Mức phạt - Mô tả
 """)
         
         parts.append("=" * 70)
@@ -529,65 +517,12 @@ HƯỚNG DẪN:
             return base_prompt
         
         parts = [base_prompt]
-        parts.append("\n" + "=" * 70)
         parts.append("VÍ DỤ:")
-        parts.append("=" * 70)
-        
         for i, example in enumerate(examples[:max_examples], 1):
             parts.append(f"\nVí dụ {i}:")
             parts.append(f"Câu hỏi: {example['question']}")
             parts.append(f"Trả lời: {example['answer']}")
         
-        parts.append("\n" + "=" * 70)
         parts.append("BÂY GIỜ HÃY TRẢ LỜI CÂU HỎI HIỆN TẠI THEO CÁCH TƯƠNG TỰ:")
         
         return "\n".join(parts)
-
-
-# Example usage
-if __name__ == "__main__":
-    # Mock retrieval context
-    retrieval_context = {
-        'question': "Ai lãnh đạo chiến dịch Điện Biên Phủ?",
-        'question_type': 'WHO',
-        'top_entities': [
-            {
-                'name': 'Võ Nguyên Giáp',
-                'type': 'PERSON',
-                'description': 'Đại tướng, Tổng Tư lệnh quân đội',
-                'score': 0.92
-            },
-            {
-                'name': 'Điện Biên Phủ',
-                'type': 'EVENT',
-                'description': 'Chiến dịch quân sự lớn năm 1954',
-                'score': 0.88
-            }
-        ],
-        'relationships': [
-            {
-                'source': 'Võ Nguyên Giáp',
-                'target': 'Điện Biên Phủ',
-                'type': 'CHỈ_HUY',
-                'description': 'Chỉ huy chiến dịch',
-                'direction': 'outgoing'
-            }
-        ],
-        'paths': []
-    }
-    
-    # Initialize builder
-    builder = ContextBuilder(max_context_length=8000)
-    
-    # Build context
-    context = builder.build_rag_context(
-        question="Ai lãnh đạo chiến dịch Điện Biên Phủ?",
-        retrieval_context=retrieval_context
-    )
-    
-    # Format cho Gemini
-    prompt = builder.format_for_gemini(context, prompt_type="qa")
-    
-    print(prompt)
-    print("\n" + "=" * 70)
-    print(f"Estimated tokens: {builder.estimate_token_count(prompt)}")

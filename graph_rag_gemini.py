@@ -435,9 +435,9 @@ if __name__ == "__main__":
     from graph_rag_context import ContextBuilder
     
     # Setup
-    NEO4J_URI = "neo4j+s://0c367113.databases.neo4j.io"
-    NEO4J_USERNAME = "neo4j"
-    NEO4J_PASSWORD = "gTO1K567hBLzkRdUAhhEb-UqvBjz0i3ckV3M9v_-Nio"
+    NEO4J_URI="neo4j+s://41ab799a.databases.neo4j.io"
+    NEO4J_USERNAME="neo4j"
+    NEO4J_PASSWORD="xmriUzmvo9dSAyc10u9mpB7nzyQHMZFooKqH5yBP2d4"
     
     graph = Neo4jGraph(
         url=NEO4J_URI,
@@ -459,10 +459,29 @@ if __name__ == "__main__":
     )
     # Test
     result = gemini_rag.generate_answer(
-        question="Hồ Chí Minh là ai?",
+        question="Mức phạt vi phạm vượt đèn đỏ đối với xe máy là bao nhiêu?",
         prompt_type="qa",
         max_tokens=8192
     )
     
-    print("\n ANSWER: ")
+    print("\n=== ANSWER ===")
     print(result['answer'])
+    
+    print("\n=== METADATA ===")
+    print(f"Entities used: {result['metadata']['entities_used']}")
+    print(f"Relationships used: {result['metadata']['relationships_used']}")
+    print(f"Total time: {result['metadata']['total_time']:.2f}s")
+    
+    # Test với câu hỏi phức tạp hơn
+    print("\n" + "="*70)
+    print("=== TEST 2: Câu hỏi phức tạp ===")
+    print("="*70)
+    
+    result2 = gemini_rag.generate_answer(
+        question="So sánh mức phạt không đội mũ bảo hiểm giữa xe máy và ô tô",
+        prompt_type="explain",
+        max_tokens=8192
+    )
+    
+    print("\n=== ANSWER ===")
+    print(result2['answer'])

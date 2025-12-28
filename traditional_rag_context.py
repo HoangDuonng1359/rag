@@ -139,7 +139,7 @@ class TraditionalContextBuilder:
         parts = []
         
         if include_instructions:
-            parts.append("""Bạn là một chuyên gia lịch sử Việt Nam. Nhiệm vụ của bạn là trả lời câu hỏi dựa trên các đoạn văn được cung cấp.
+            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là trả lời câu hỏi dựa trên các đoạn văn được cung cấp.
 
 HƯỚNG DẪN:
 - Chỉ sử dụng thông tin từ các đoạn văn được cung cấp
@@ -196,13 +196,13 @@ HƯỚNG DẪN:
         parts = []
         
         if include_instructions:
-            parts.append("""Bạn là một chuyên gia lịch sử Việt Nam. Nhiệm vụ của bạn là tóm tắt các đoạn văn sau.
+            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là tóm tắt các đoạn văn sau.
 
 HƯỚNG DẪN:
 - Tạo tóm tắt ngắn gọn, súc tích (3-5 câu)
 - Bao gồm các thông tin chính
-- Highlight các sự kiện và nhân vật quan trọng
-- Sử dụng thứ tự thời gian nếu có
+- Highlight các quy định và điều khoản quan trọng
+- Sử dụng thứ tự logic nếu có
 """)
         
         parts.append("CÁC ĐOẠN VĂN CẦN TÓM TẮT:")
@@ -226,13 +226,13 @@ HƯỚNG DẪN:
         parts = []
         
         if include_instructions:
-            parts.append("""Bạn là một giáo viên lịch sử Việt Nam. Nhiệm vụ của bạn là giải thích về chủ đề được hỏi.
+            parts.append("""Bạn là một giảng viên luật giao thông Việt Nam. Nhiệm vụ của bạn là giải thích về chủ đề được hỏi.
 
 HƯỚNG DẪN:
 - Giải thích rõ ràng, dễ hiểu
-- Bao gồm nguyên nhân, diễn biến, hậu quả
+- Bao gồm quy định, lý do, hậu quả
 - Sử dụng examples từ context
-- Giải thích các thuật ngữ lịch sử
+- Giải thích các thuật ngữ pháp lý
 """)
         
         parts.append("THÔNG TIN:")

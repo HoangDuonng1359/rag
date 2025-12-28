@@ -291,7 +291,7 @@ if __name__ == "__main__":
     print("=== TEST QUESTION ===")
     print("="*80)
     
-    question = "Hồ Chí Minh là ai?"
+    question = "Mức phạt không đội mũ bảo hiểm là bao nhiêu?"
     
     result = rag.answer(
         question,

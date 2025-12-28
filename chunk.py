@@ -1,17 +1,3 @@
-'''
-Cách chạy:
-    conda activate rag
-    python chunk.py
-Dữ liệu gốc: ./data/chapter10.md
-File này chia nhỏ thành các đoạn (chunk) để xử lý dễ dàng hơn.
-Một số quy tắc:
-- Mỗi đoạn không vượt quá 500 từ.
-- Chia đoạn tại các tiêu đề chương, mục, hoặc dấu chấm câu lớn.
-- Giữ nguyên ngữ cảnh, tránh cắt ngang câu hoặc ý.
-- overlap 200 kí tự giữa các đoạn để duy trì sự liên kết.
-- Lưu vào ./data/chunk/chapter10_chunk.json
-'''
-
 import re
 import json
 import os
@@ -282,8 +268,8 @@ class HybridChunker:
 
 if __name__ == "__main__":
     # Cấu hình
-    input_file = "cleaned_chapter10.md"
-    output_file = "data/chunk/chapter10_chunk.json"
+    input_file = "./data/chapter10.md"
+    output_file = "./data/chunk/chapter10_chunk.json"
     
     # Tạo chunker và xử lý
     chunker = HybridChunker(max_words=500, min_words=300, overlap_chars=200)

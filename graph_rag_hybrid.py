@@ -28,10 +28,10 @@ class HybridRetriever:
         
         # Question type keywords để infer intent
         self.question_patterns = {
-            'WHO': ['ai', 'người nào', 'nhân vật', 'lãnh đạo', 'chỉ huy'],
+            'WHO': ['ai', 'người nào', 'cá nhân', 'tổ chức', 'chủ xe'],
             'WHERE': ['ở đâu', 'nơi nào', 'địa điểm', 'khu vực', 'vùng'],
             'WHEN': ['khi nào', 'năm nào', 'thời gian', 'lúc nào'],
-            'WHAT': ['gì', 'sự kiện', 'chiến dịch', 'trận đánh'],
+            'WHAT': ['gì', 'vi phạm', 'quy định', 'điều luật', 'biển báo'],
             'WHY': ['tại sao', 'vì sao', 'lý do', 'nguyên nhân'],
             'HOW': ['như thế nào', 'bằng cách nào', 'thế nào']
         }
@@ -525,7 +525,7 @@ if __name__ == "__main__":
     hybrid = HybridRetriever(graph_query, embeddings)
     
     # Test retrieval
-    question = "Ai là lãnh đạo của chiến dịch biên giới?"
+    question = "Quy định về tốc độ tối đa trong khu dân cư là gì?"
     context = hybrid.retrieve(question, top_k=10)
     
     # Print formatted context

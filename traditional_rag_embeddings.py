@@ -249,11 +249,11 @@ if __name__ == "__main__":
     # Test batch encoding
     print("\n=== Test Batch Encoding ===")
     texts = [
-        "Hồ Chí Minh lãnh đạo cách mạng",
-        "Chiến dịch Điện Biên Phủ",
-        "Việt Nam dân chủ cộng hòa",
-        "Kháng chiến chống Pháp",
-        "Mặt trận Việt Minh"
+        "Quy định về tốc độ tối đa trên đường cao tốc",
+        "Mức phạt không đội mũ bảo hiểm",
+        "Luật giao thông đường bộ Việt Nam",
+        "Vi phạm nồng độ cồn khi lái xe",
+        "Biển báo cấm đỗ xe"
     ]
     
     batch_embeddings = embeddings.encode_batch(texts, batch_size=2, show_progress=True)

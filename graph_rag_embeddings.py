@@ -17,7 +17,7 @@ class EntityEmbeddings:
     def __init__(
         self, 
         graph: Neo4jGraph,
-        model_name: str = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+        model_name: str = "truro7/vn-law-embedding"
     ):
         """
         Initialize với Neo4j graph và sentence transformer model
@@ -59,7 +59,7 @@ class EntityEmbeddings:
         Lấy tất cả entities từ Neo4j
         
         Returns:
-            List of entity dicts với name, type, description, page info
+            List of entity dicts với name, type, description, law info
         """
         query = """
         MATCH (n)
@@ -68,8 +68,11 @@ class EntityEmbeddings:
                labels(n)[0] as type,
                n.description as description,
                id(n) as node_id,
-               n.first_seen_page as first_seen_page,
-               n.first_seen_chapter as first_seen_chapter
+               n.law_code as law_code,
+               n.law_name as law_name,
+               n.article as article,
+               n.chapter as chapter,
+               n.mode as mode
         ORDER BY n.name
         """
         
@@ -206,7 +209,7 @@ class EntityEmbeddings:
             limit: Giới hạn số lượng, None = all
             
         Returns:
-            List of entities với embeddings
+            List of entities với embeddings và law metadata
         """
         query = """
         MATCH (n)
@@ -214,7 +217,12 @@ class EntityEmbeddings:
         RETURN n.name as name,
                labels(n)[0] as type,
                n.description as description,
-               n.embedding as embedding
+               n.embedding as embedding,
+               n.law_code as law_code,
+               n.law_name as law_name,
+               n.article as article,
+               n.chapter as chapter,
+               n.mode as mode
         """
         
         if limit:
@@ -227,7 +235,9 @@ class EntityEmbeddings:
         self,
         query: str,
         top_k: int = 10,
-        filter_types: Optional[List[str]] = None
+        filter_types: Optional[List[str]] = None,
+        filter_mode: Optional[str] = None,
+        filter_law_code: Optional[str] = None
     ) -> List[Dict]:
         """
         Semantic search cho entities dựa vào query string
@@ -235,10 +245,12 @@ class EntityEmbeddings:
         Args:
             query: Search query
             top_k: Số lượng kết quả
-            filter_types: Chỉ search trong entity types này (e.g. ['PERSON', 'LOCATION'])
+            filter_types: Chỉ search trong entity types này (e.g. ['VIOLATION', 'PENALTY'])
+            filter_mode: Lọc theo loại giao thông ('đường bộ', 'hàng hải', 'hàng không')
+            filter_law_code: Lọc theo mã luật cụ thể (e.g. '36/2024/QH15')
             
         Returns:
-            List of entities với similarity scores
+            List of entities với similarity scores và law metadata
         """
         # Generate embedding cho query
         query_embedding = self.model.encode(query, convert_to_numpy=True)
@@ -254,6 +266,14 @@ class EntityEmbeddings:
         if filter_types:
             entities = [e for e in entities if e['type'] in filter_types]
         
+        # Filter by mode if specified
+        if filter_mode:
+            entities = [e for e in entities if e.get('mode') == filter_mode]
+        
+        # Filter by law code if specified
+        if filter_law_code:
+            entities = [e for e in entities if e.get('law_code') == filter_law_code]
+        
         # Calculate similarities
         results = []
         for entity in entities:
@@ -267,8 +287,11 @@ class EntityEmbeddings:
                 'type': entity['type'],
                 'description': entity['description'],
                 'similarity': float(similarity),
-                'first_seen_page': entity.get('first_seen_page'),
-                'first_seen_chapter': entity.get('first_seen_chapter')
+                'law_code': entity.get('law_code'),
+                'law_name': entity.get('law_name'),
+                'article': entity.get('article'),
+                'chapter': entity.get('chapter'),
+                'mode': entity.get('mode')
             })
         
         # Sort by similarity và return top_k
@@ -417,9 +440,9 @@ if __name__ == "__main__":
     from langchain_community.graphs import Neo4jGraph
     
     # Setup Neo4j
-    NEO4J_URI = "neo4j+s://0c367113.databases.neo4j.io"
-    NEO4J_USERNAME = "neo4j"
-    NEO4J_PASSWORD = "gTO1K567hBLzkRdUAhhEb-UqvBjz0i3ckV3M9v_-Nio"
+    NEO4J_URI="neo4j+s://41ab799a.databases.neo4j.io"
+    NEO4J_USERNAME="neo4j"
+    NEO4J_PASSWORD="xmriUzmvo9dSAyc10u9mpB7nzyQHMZFooKqH5yBP2d4"
     
     graph = Neo4jGraph(
         url=NEO4J_URI,
@@ -435,6 +458,38 @@ if __name__ == "__main__":
     
     # Test semantic search
     print("\n=== Test Semantic Search ===")
-    results = embeddings.semantic_search("lãnh đạo cách mạng", top_k=5)
+    results = embeddings.semantic_search("vi phạm tốc độ trên đường cao tốc", top_k=5)
     for i, r in enumerate(results, 1):
-        print(f"{i}. {r['name']} ({r['type']}) - similarity: {r['similarity']:.3f}")
+        article = r.get('article', 'N/A')
+        law_code = r.get('law_code', 'N/A')
+        print(f"{i}. {r['name']} ({r['type']}) - {r['similarity']:.3f}")
+        print(f"   {law_code}, Điều {article}")
+    
+    # Test semantic search with filter
+    print("\n=== Search Vi phạm đường bộ ===")
+    results = embeddings.semantic_search(
+        "không đội mũ bảo hiểm", 
+        top_k=3, 
+        filter_types=['VIOLATION'],
+        filter_mode='đường bộ'
+    )
+    for i, r in enumerate(results, 1):
+        print(f"{i}. {r['name']} - {r['similarity']:.3f} (Điều {r.get('article', 'N/A')})")
+    
+    # Test semantic search for penalties
+    print("\n=== Search Mức phạt ===")
+    results = embeddings.semantic_search(
+        "phạt tiền vi phạm giao thông", 
+        top_k=3, 
+        filter_types=['PENALTY']
+    )
+    for i, r in enumerate(results, 1):
+        print(f"{i}. {r['name']} - {r['similarity']:.3f}")
+        if r.get('description'):
+            print(f"   {r['description'][:80]}...")
+    
+    # Test find similar entities
+    print("\n=== Tìm Vi phạm tương tự ===")
+    similar = embeddings.find_similar_entities("Vượt đèn đỏ", top_k=5)
+    for i, r in enumerate(similar, 1):
+        print(f"{i}. {r['name']} ({r['type']}) - {r['similarity']:.3f}")

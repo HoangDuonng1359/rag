@@ -239,9 +239,9 @@ if __name__ == "__main__":
     # Test multiple queries
     print("\n=== Test Multiple Queries ===")
     test_queries = [
-        "Ai là người lãnh đạo cách mạng?",
-        "Các chiến dịch quân sự quan trọng",
-        "Chính phủ Việt Nam dân chủ cộng hòa"
+        "Mức phạt vượt đèn đỏ là bao nhiêu?",
+        "Các quy định về tốc độ trên đường cao tốc",
+        "Điều khoản về việc không đội mũ bảo hiểm"
     ]
     
     for query in test_queries:

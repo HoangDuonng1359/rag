@@ -347,9 +347,9 @@ if __name__ == "__main__":
     # Test search
     print("\n=== Testing Semantic Search ===")
     test_queries = [
-        "Cách mạng tháng Tám thành công như thế nào?",
-        "Ai là người lãnh đạo phong trào cách mạng?",
-        "Các chiến dịch quân sự quan trọng"
+        "Quy định về nồng độ cồn khi lái xe",
+        "Mức phạt vi phạm tốc độ trên đường cao tốc",
+        "Các biển báo giao thông quan trọng"
     ]
     
     for query in test_queries:
