@@ -6,6 +6,7 @@ export interface Message {
   question: string;
   answer: string;
   timestamp: string;
+  model?: 'graphrag' | 'rag';
 }
 
 export interface SessionResponse {

@@ -110,6 +110,30 @@ function App() {
       }
     }
 
+    // Hiện tin nhắn người dùng ngay lập tức
+    const userMessage: Message = {
+      question: question,
+      answer: '',  // Sẽ được cập nhật sau
+      timestamp: new Date().toISOString(),
+      model: selectedModel,
+    };
+
+    setConversations(prev => prev.map(conv => {
+      if (conv.id === targetConvId) {
+        return {
+          ...conv,
+          messages: [...conv.messages, userMessage],
+          messageCount: conv.messages.length + 1,
+          lastMessage: question,
+          timestamp: new Date().toISOString(),
+          title: conv.title === 'Hội thoại mới' 
+            ? question.substring(0, 50) + (question.length > 50 ? '...' : '')
+            : conv.title,
+        };
+      }
+      return conv;
+    }));
+
     setIsLoading(true);
 
     try {
@@ -118,34 +142,32 @@ function App() {
         ? await api.askQuestion(targetConvId, question)
         : await api.askQuestionRAG(targetConvId, question);
 
-      // Add new message to history
-      const newMessage: Message = {
-        question: response.question,
-        answer: response.answer,
-        timestamp: new Date().toISOString(),
-      };
-
       const newMetadata: ChatMetadata = {
         totalTime: response.metadata.total_time,
         entitiesUsed: response.metadata.entities_used,
         relationshipsUsed: response.metadata.relationships_used,
       };
 
-      // Update conversation
+      // Cập nhật message cuối cùng với answer từ API
       setConversations(prev => prev.map(conv => {
         if (conv.id === targetConvId) {
-          const updatedMessages = [...conv.messages, newMessage];
+          const updatedMessages = [...conv.messages];
+          const lastMessageIndex = updatedMessages.length - 1;
+          
+          if (lastMessageIndex >= 0) {
+            updatedMessages[lastMessageIndex] = {
+              ...updatedMessages[lastMessageIndex],
+              answer: response.answer,
+              model: selectedModel,
+            };
+          }
+
           return {
             ...conv,
             messages: updatedMessages,
             messageCount: updatedMessages.length,
-            lastMessage: question,
             timestamp: new Date().toISOString(),
             metadata: newMetadata,
-            // Update title with first question if still default
-            title: conv.title === 'Hội thoại mới' 
-              ? question.substring(0, 50) + (question.length > 50 ? '...' : '')
-              : conv.title,
           };
         }
         return conv;
@@ -187,7 +209,7 @@ function App() {
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">
-                    {currentConversation?.title || 'Graph RAG Chat'}
+                    {currentConversation?.title || 'Traffic Chat'}
                   </h1>
                   <p className="text-sm text-gray-500">
                     Hỏi đáp về luật giao thông Việt Nam
@@ -234,7 +256,7 @@ function App() {
                   </svg>
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                  Chào mừng đến với Graph RAG Chat!
+                  Chào mừng đến với traffic chat!
                 </h2>
 
                 {/* Example questions */}

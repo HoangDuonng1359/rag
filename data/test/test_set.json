@@ -11,7 +11,7 @@
     },
     {
         "id": "q_003",
-        "question": "Uống rượu xong tôi đạp xe về nhà cho an toàn, có bị phạt không?",
+        "question": "Uống rượu xong tôi đạp xce về nhà cho an toàn, có bị phạt không?",
         "ground_truth": "Có. Mức phạt: Phạt tiền 100.000 – 200.000 đồng. Giải thích: Người điều khiển xe thô sơ có nồng độ cồn, theo khoản 1 Điều 9 Nghị định 168/2024/NĐ-CP."
     },
     {
