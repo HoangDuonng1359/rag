@@ -23,7 +23,7 @@ class ContextRAG:
         rerank_model_name: str = "huynhdat543/VietNamese_law_rerank",
         gemini_api_key: str = None,
         gemini_model: str = "gemini-2.5-flash",
-        use_rerank: bool = True,
+        use_rerank: bool = False,
         embedding_model=None,  # Cho phép pass model từ bên ngoài
     ):
         """
@@ -80,32 +80,34 @@ class ContextRAG:
             print("Warning: Gemini API key not provided. Q&A feature disabled.")
     
     def dense_search(self, query: str, top_k: int = 30) -> List[Dict[str, Any]]:
-        """
-        Tìm kiếm dense vector trong ChromaDB.
-        
-        Args:
-            query: Câu query
-            top_k: Số lượng kết quả trả về
-            
-        Returns:
-            List các hits với id, content, metadata, score
-        """
         q_emb = self.embed_model.encode([query], convert_to_numpy=True).tolist()
+        content_filter = None
+
+        if "đi bộ" in query.lower():
+            content_filter = {"$contains": "đi bộ"}
+        if "xe gắn máy" in query.lower():
+            content_filter = {"$contains": "xe gắn máy"}
         res = self.collection.query(
             query_embeddings=q_emb,
             n_results=top_k,
             include=["documents", "metadatas", "distances"],
+            where_document=content_filter
         )
-        
+
         hits = []
-        for i in range(len(res["ids"][0])):
-            hits.append({
-                "id": res["ids"][0][i],
-                "content": res["documents"][0][i],
-                "metadata": res["metadatas"][0][i],
-                "score_dense": 1.0 - res["distances"][0][i],  # cosine -> similarity
-            })
+        if res["ids"] and res["ids"][0]:
+            for i in range(len(res["ids"][0])):
+                hits.append(
+                    {
+                        "id": res["ids"][0][i],
+                        "content": res["documents"][0][i],
+                        "metadata": res["metadatas"][0][i],
+                        "score_dense": 1.0 - res["distances"][0][i],
+                    }
+                )
+
         return hits
+
     
     @torch.no_grad()
     def rerank_vi(self, query: str, hits: List[Dict], top_n: int = 8) -> List[Dict]:
@@ -187,50 +189,129 @@ class ContextRAG:
         self,
         query: str,
         top_k_dense: int = 30,
+        use_rerank: bool = True,
         top_n_final: int = 10,
-    ) -> Dict[str, Any]:
-        """
-        Retrieve context từ ChromaDB với query.
-        
-        Args:
-            query: Câu hỏi của user
-            top_k_dense: Số lượng kết quả từ dense search
-            top_n_final: Số lượng kết quả cuối cùng sau rerank
-            
-        Returns:
-            Dict chứa context string và hits
-        """
-        # Chuẩn hóa query: "xe máy" -> "xe gắn máy"
-        normalized_query = query
-        if "xe máy" in query and "xe máy chuyên dùng" not in query:
-            normalized_query = query.replace("xe máy", "xe gắn máy")
-        
-        # 1) Dense retrieval
-        dense_hits = self.dense_search(normalized_query, top_k=top_k_dense)
-        
-        # Filter out "xe máy chuyên dùng" nếu query về xe gắn máy
-        if "xe gắn máy" in normalized_query and "xe máy chuyên dùng" not in normalized_query:
+    ):
+        # Ánh xạ thay thế trực tiếp 1–1
+        replace_map = {
+            "rượu": "nồng độ cồn",
+            "bia": "nồng độ cồn",
+            "xe máy": "xe gắn máy",
+            "xử lý": "phạt",
+            "có sao không": "bị phạt không",
+            "băng qua đường": "đi bộ qua đường",
+            "đi qua đường": "đi bộ qua đường",
+            "xe con": "xe ô tô",
+            "lái tàu hỏa": "nhân viên đường sắt",
+            "gas": "hàng hoá dễ cháy",
+            "bỏ chạy": "bỏ trốn",
+            "chiếu lên": "gây ảnh hưởng",
+        }
+
+        for src, dst in replace_map.items():
+            if src in query:
+                query = query.replace(src, dst)
+
+        # Các rule phụ thuộc vào ngữ cảnh "phạt"
+        if "thế nào" in query and "phạt" not in query:
+            query = query.replace("thế nào", "phạt thế nào")
+        if "vi phạm" in query and "phạt" not in query:
+            query = query.replace("vi phạm", "phạt")
+        xe_uu_tien_map = [
+            "xe cứu thương",
+            "xe cứu hỏa",
+            "xe chữa cháy",
+            "xe công an",
+            "xe cảnh sát",
+            "xe quân sự",
+            "xe hộ tống",
+            "xe dẫn đoàn",
+            "xe ưu tiên",
+        ]
+        for kw in xe_uu_tien_map:
+            if kw in query:
+                query = query.replace(kw, "xe ưu tiên")
+        # Nhóm xe máy chuyên dùng
+        specialized_vehicles = [
+            "máy xúc",
+            "xe đào",
+            "xe ủi",
+            "xe lu",
+            "xe san",
+            "xe cẩu",
+            "xe nâng",
+            "xe gặt đập liên hợp",
+            "máy kéo",
+            "máy cày",
+        ]
+        for kw in specialized_vehicles:
+            if kw in query:
+                query = query.replace(kw, "xe máy chuyên dùng")
+
+        # Nhóm từ đồng nghĩa/biến thể của xe gắn máy
+        xe_gan_may_map = [
+            "xe tay ga",
+            "xe ga",
+            "xe scooter",
+            "xe số",
+            "xe máy điện",
+            "xe tay ga điện",
+            "xe cub",
+            "xe dream",
+            "xe wave",
+            "xe sirius",
+            "xe vision",
+            "xe lead",
+            "xe air blade",
+            "xe máy",  # để cuối cùng để không phá rule ở trên
+        ]
+        for kw in xe_gan_may_map:
+            if kw in query:
+                query = query.replace(kw, "xe gắn máy")
+
+        # 1) dense retrieval
+        dense_hits = self.dense_search(query, top_k=top_k_dense)
+
+        if "xe gắn máy" in query and "xe máy chuyên dùng" not in query:
             dense_hits = [
-                h for h in dense_hits 
-                if "xe máy chuyên dùng" not in h["content"]
+                h for h in dense_hits if "xe máy chuyên dùng" not in h["content"]
             ]
-        
-        # 2) Rerank nếu cần
-        if self.use_rerank:
-            selected_hits = self.rerank_vi(normalized_query, dense_hits, top_n=top_n_final)
+
+        if (
+            "ô tô" in query
+            and "ô tô kinh doanh" not in query
+            and "ô tô chở trẻ" not in query
+        ):
+            dense_hits = [
+                h
+                for h in dense_hits
+                if "ô tô kinh doanh" not in h["content"]
+                and "ô tô chở trẻ" not in h["content"]
+            ]
+
+        if "ô tô" in query and "đường" in query:
+            dense_hits = [
+                h
+                for h in dense_hits
+                if "lĩnh vực hàng hải" not in h["metadata"]["law_name"]
+            ]
+
+        # 2) rerank nếu cần
+        if use_rerank:
+            selected_hits = self.rerank_vi(query, dense_hits, top_n=top_n_final)
         else:
             selected_hits = dense_hits[:top_n_final]
-        
-        # 3) Build context
+
+        # 3) build context
         context = self.build_context_from_hits(selected_hits)
-        
+
         return {
             "context": context,
             "hits": selected_hits,
-            "normalized_query": normalized_query,
         }
+
     
-    def call_gemini(self, prompt: str, max_tokens: int = 4096) -> str:
+    def call_gemini(self, prompt: str, max_tokens: int = 2048) -> str:
         """
         Gọi Gemini API để tạo câu trả lời.
         
@@ -253,8 +334,8 @@ class ContextRAG:
             prompt,
             generation_config=genai.types.GenerationConfig(
                 max_output_tokens=max_tokens,
-                temperature=0.3,
-                top_p=0.95,
+                temperature=0.5,
+                top_p=0.9,
             ),
             safety_settings=[
                 {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
@@ -277,89 +358,168 @@ class ContextRAG:
         print(f"[DEBUG] Response length: {len(response_text)} chars")
         
         return response_text
+    def build_llm_context_from_hits(self,hits):
+        """
+        hits: danh sách kết quả retrieve từ rag_retrieve(...)
+        Mỗi phần tử có dạng:
+        {
+            "doc": {
+                "content": "...",
+                "metadata": {
+                    "law_name": "...",
+                    "law_code": "...",
+                    "article": "...",
+                    "clauses": [...],
+                    ...
+                }
+            },
+            ...
+        }
+        """
+        blocks = []
+        for idx, h in enumerate(hits, start=1):
+            doc = h["doc"] if isinstance(h, dict) and "doc" in h else h
+            content = doc["content"]
+            md = doc["metadata"]
+
+            law_name = md.get("law_name", "Không rõ tên luật")
+            law_code = md.get("law_code", "Không rõ mã luật")
+            article = md.get("article", "Không rõ điều")
+            clauses = md.get("clauses", [])
+            clause = clauses[0] if clauses else "Không rõ khoản"
+
+            block = f"""[{idx}]
+                        Luật: {law_name} ({law_code})
+                        Điều: {article}
+                        Khoản: {clause}
+                        Nội dung:
+                        {content}
+                    """
+            blocks.append(block)
+
+        return "\n\n".join(blocks)
     
-    def build_qa_prompt(self, question: str, context: str) -> str:
-        """
-        Xây dựng prompt cho Q&A task với Gemini.
-        
-        Args:
-            question: Câu hỏi của user
-            context: Context từ RAG retrieve
-            
-        Returns:
-            String prompt hoàn chỉnh
-        """
-        prompt = f"""Bạn là trợ lý pháp lý về giao thông đường bộ Việt Nam.
+    def llm_answer_from_rag(self, question: str, rag_result: dict) -> str:
+        hits = rag_result["hits"]
+        context_text = self.build_llm_context_from_hits(hits)
 
-Chỉ dùng thông tin có trong CÁC ĐOẠN LUẬT (CONTEXT) để trả lời câu hỏi. Không được bịa thêm điều luật, số điều/khoản, mức phạt hoặc ví dụ ngoài context. Nếu không tìm thấy khoản nào phù hợp, trả lời "KHÔNG ĐỦ THÔNG TIN".
+        parts = []
 
-Lưu ý về thuật ngữ: "xe mô tô", "xe gắn máy", "xe máy" và "các loại xe tương tự" KHÁC với "xe máy chuyên dùng". Không được coi "xe máy chuyên dùng" là "xe mô tô/xe gắn máy/xe máy". Khi so sánh hành vi với context, phải căn cứ đúng loại phương tiện được nêu.
+        # PROMPT DUY NHẤT ĐÚNG NHƯ BẠN YÊU CẦU
+        parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là trả lời câu hỏi dựa trên thông tin được cung cấp.
 
-FORMAT TRẢ LỜI - BẮT BUỘC PHẢI ĐẦY ĐỦ 3 PHẦN:
-1. KẾT LUẬN: Bắt đầu bằng "KẾT LUẬN: CÓ PHẠT." hoặc "KẾT LUẬN: KHÔNG PHẠT." hoặc "KẾT LUẬN: KHÔNG ĐỦ THÔNG TIN."
+    HƯỚNG DẪN:
+    - Chỉ sử dụng thông tin từ context được cung cấp
+    - Trả lời chính xác, có căn cứ, đi thẳng vào vấn đề 
+    - Nếu không có đủ thông tin, hãy nói rõ
+    - Sử dụng tiếng Việt tự nhiên và dễ hiểu
+    YÊU CẦU TRẢ LỜI:
+    - Trả lời theo dạng đoạn văn mạch lạc, không trả lời với câu mở đầu "dựa vào ngữ cảnh..." hãy trả lời trực tiếp
+    - Nêu rõ:
+    + Quy định / nội dung chính
+    + Dẫn chứng từ context (nếu có)
+    + Giải thích
+    - Phải có kết luận cuối cùng (kết luận highlight lên để người đọc dễ nhận biết)
+    - Câu trả lời phải logic.
+    - Cuối câu ghi nguồn: Ví dụ: Nguồn: Nghị định 168/2024/NĐ-CP, Điều 5, Khoản 2, Luật Trật tự, an toàn giao thông đường bộ
+    - Nếu context không đủ để xác định rõ vi phạm và căn cứ pháp lý, bắt buộc phải dùng MỘT trong các cụm sau trong câu trả lời:
+    "không đủ thông tin"
+    "không đủ dữ kiện".""")
 
-2. CĂN CỨ: Ngay sau đó viết "Căn cứ: Luật [tên luật] ([mã luật]), Điều [số điều], Khoản [số khoản]."
+        # GHÉP CONTEXT + CÂU HỎI
+        parts.append(f"CÂU HỎI:\n\"\"\"{question}\"\"\"")
+        parts.append(f"CONTEXT (CÁC ĐOẠN LUẬT):\n{context_text}")
 
-3. GIẢI THÍCH: Sau đó BẮT BUỘC phải có phần "Giải thích:" với 2-4 câu giải thích rõ ràng:
-   - Nêu ngắn gọn hành vi trong câu hỏi
-   - Nêu nội dung chính của khoản/điểm áp dụng trong context
-   - Nêu rõ vì sao hành vi đó (có hoặc không) thỏa điều kiện của khoản/điểm này
-   - Nếu kết luận CÓ PHẠT thì PHẢI nêu cụ thể mức phạt (nếu có trong context)
+        prompt = "\n\n".join(parts)
 
-QUAN TRỌNG: PHẢI VIẾT ĐẦY ĐỦ CẢ 3 PHẦN TRÊN. KHÔNG ĐƯỢC DỪNG GIỮ CHỪNG.
+        answer = self.call_gemini(prompt, max_tokens=2048)
+        return answer
+    def is_insufficient_answer(self, answer: str) -> bool:
+        text = answer.lower()
+        keywords = [
+            "không đủ thông tin",
+            "không đủ dữ kiện",
+        ]
+        return any(kw in text for kw in keywords)
+    def rewrite_question_for_rag(self, original_question: str) -> str:
+        prompt = f"""
+    Bạn là một chuyên gia pháp lý chuyên sâu về Luật Giao thông của Việt Nam và các Nghị định xử phạt vi phạm hành chính trong lĩnh vực giao thông.
 
-CÂU HỎI GỐC:
-\"\"\"{question}\"\"\"
+    Nhiệm vụ:
+    - Hãy viết lại câu hỏi dân dã của người dùng thành một câu hỏi pháp lý chuẩn mực và phạm vi rõ ràng (Đường bộ, đường thuỷ, hàng hải, hàng không, đường sắt), có loại xe rõ ràng.
+    - Không được thay đổi ý nghĩa chính của câu hỏi.
+    - Trả về duy nhất 1 câu hỏi đã viết lại, không thêm giải thích.
 
-CÁC ĐOẠN LUẬT (CONTEXT):
-{context}
-"""
-        return prompt
-    
-    def answer_question(
-        self,
-        question: str,
-        top_k_dense: int = 30,
-        top_n_final: int = 10,
-        max_tokens: int = 4096,
-    ) -> Dict[str, Any]:
-        """
-        Trả lời câu hỏi bằng RAG + Gemini.
-        
-        Args:
-            question: Câu hỏi của user
-            top_k_dense: Số lượng kết quả từ dense search
-            top_n_final: Số lượng kết quả sau rerank
-            max_tokens: Số token tối đa cho Gemini response
-            
-        Returns:
-            Dict chứa answer, context, hits, và metadata
-        """
-        # 1) Retrieve context
+    Câu hỏi gốc của người dùng:
+    \"\"\"{original_question}\"\"\"
+
+    Câu hỏi đã viết lại:
+    """
+        new_q = self.call_gemini(prompt, max_tokens=2048)
+        return new_q.strip()
+    xe_uu_tien_map = [
+        "xe cứu thương",
+        "xe cứu hỏa",
+        "xe chữa cháy",
+        "xe công an",
+        "xe cảnh sát",
+        "xe quân sự",
+        "xe hộ tống",
+        "xe dẫn đoàn",
+        "xe ưu tiên",
+    ]
+    def is_specialized_question(self, question: str) -> bool:
+        q_lower = question.lower()
+        return any(kw.lower() in q_lower for kw in self.xe_uu_tien_map)
+    def rag_qa(self, question: str,
+            top_k_dense: int = 30,
+            use_rerank: bool = False,
+            top_n_final: int = 5,
+            enable_rewrite: bool = True):
+
+        if self.is_specialized_question(question):
+            top_n_final = 10
         rag_result = self.rag_retrieve(
             query=question,
             top_k_dense=top_k_dense,
+            use_rerank=use_rerank,
             top_n_final=top_n_final,
         )
-        
-        # 2) Build prompt
-        prompt = self.build_qa_prompt(question, rag_result["context"])
-        
-        print("\n" + "="*60)
-        print("PROMPT SENT TO GEMINI:")
-        print("="*60)
-        print(prompt)
-        print("="*60 + "\n")
-        
-        # 3) Call Gemini
-        answer = self.call_gemini(prompt, max_tokens=max_tokens)
-        
+
+        answer = self.llm_answer_from_rag(question, rag_result)
+
+        # Nếu câu trả lời ổn (không "không đủ thông tin"), trả về format thống nhất
+        if not (enable_rewrite and self.is_insufficient_answer(answer)):
+            return {
+                "question": question,
+                "answer": answer,
+                "context": rag_result["context"],
+                "hits": rag_result["hits"],
+                "normalized_query": question,  # Query không bị rewrite
+            }
+        print("sửa lại câu hỏi")
+        # ===== LẦN 2: REWRITE QUESTION CHO RAG =====
+        rewritten_q = self.rewrite_question_for_rag(question)
+        print(rewritten_q)
+        rag_result_2 = self.rag_retrieve(
+            query=rewritten_q,
+            top_k_dense=top_k_dense,
+            use_rerank=use_rerank,
+            top_n_final=top_n_final,
+        )
+
+        # Lưu lại cho debug nếu muốn (ví dụ thêm vào dict)
+        rag_result_2["rewritten_query"] = rewritten_q
+
+        # GỌI LẠI LLM: vẫn trả lời theo CÂU HỎI GỐC
+        answer_2 = self.llm_answer_from_rag(question, rag_result_2)
+
         return {
             "question": question,
-            "answer": answer,
-            "context": rag_result["context"],
-            "hits": rag_result["hits"],
-            "normalized_query": rag_result["normalized_query"],
+            "answer": answer_2,
+            "context": rag_result_2["context"],
+            "hits": rag_result_2["hits"],
+            "normalized_query": rewritten_q,  # Query đã được rewrite
         }
 
 
@@ -397,7 +557,7 @@ def main():
     parser.add_argument(
         "--question",
         type=str,
-        default="Mức phạt vượt đèn đỏ đối với xe máy?",
+        default="Đang lái ô tô đi làm, tôi nghe tiếng còi xe cứu thương phía sau nhưng đường đông quá tôi cứ đi bình thường không nhường. Như vậy phạt bao nhiêu?",
         help="Câu hỏi test"
     )
     
@@ -420,14 +580,14 @@ def main():
     print(f"Question: {args.question}")
     print(f"{'='*60}\n")
     
-    result = rag_system.answer_question(args.question)
-    
+    result = rag_system.rag_qa(args.question)
+
     print("ANSWER:")
     print(result["answer"])
     print(f"\n{'='*60}")
     print(f"Retrieved {len(result['hits'])} documents")
+    print(f"Normalized query: {result['normalized_query']}")
     print(f"{'='*60}")
-
 
 if __name__ == "__main__":
     main()

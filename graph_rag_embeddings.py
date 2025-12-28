@@ -80,7 +80,15 @@ class EntityEmbeddings:
         RETURN type(r) as rel_type,
                related.name as related_name,
                labels(related)[0] as related_type,
-               startNode(r) = n as is_outgoing
+               startNode(r) = n as is_outgoing,
+               r.mode as mode,
+               r.law_code as law_code,
+               r.law_name as law_name,
+               r.chapter as chapter,
+               r.chapter_title as chapter_title,
+               r.article as article,
+               r.clauses as clauses,
+               r.has_penalty as has_penalty
         ORDER BY 
             CASE type(r)
                 WHEN 'BỊ_PHẠT' THEN 1
@@ -109,33 +117,63 @@ class EntityEmbeddings:
                 related_name = r['related_name']
                 related_type = r['related_type']
                 is_outgoing = r['is_outgoing']
-                
-                # Format khác nhau cho từng loại relationship và chiều
+                mode = r.get('mode')
+                law_code = r.get('law_code')
+                law_name = r.get('law_name')
+                chapter = r.get('chapter')
+                chapter_title = r.get('chapter_title')
+                article = r.get('article')
+                clauses = r.get('clauses')
+                has_penalty = r.get('has_penalty')
+
+                # Compose short law citation
+                citation_parts = []
+                if law_code:
+                    citation_parts.append(str(law_code))
+                if article is not None:
+                    citation_parts.append(f"Điều {article}")
+                if clauses:
+                    if isinstance(clauses, list):
+                        clause_str = ", ".join(str(c) for c in clauses)
+                    else:
+                        clause_str = str(clauses)
+                    citation_parts.append(f"Khoản {clause_str}")
+                if chapter:
+                    if chapter_title:
+                        citation_parts.append(f"Chương {chapter} - {chapter_title}")
+                    else:
+                        citation_parts.append(f"Chương {chapter}")
+                citation = "; ".join(citation_parts)
+
+                # Base relation description
+                rel_desc = None
                 if rel_type == 'BỊ_PHẠT':
                     if is_outgoing:
-                        # Violation -> Penalty
-                        context_parts.append(f"Mức phạt: {related_name}")
+                        rel_desc = f"Bị phạt: {related_name}"
                     else:
-                        # Penalty <- Violation  
-                        context_parts.append(f"Vi phạm: {related_name}")
+                        rel_desc = f"Vi phạm: {related_name}"
                 elif rel_type == 'PENALTY_FOR':
-                    if is_outgoing:
-                        context_parts.append(f"Phạt cho vi phạm: {related_name}")
-                    else:
-                        context_parts.append(f"Mức phạt: {related_name}")
+                    rel_desc = f"Phạt cho: {related_name}"
                 elif rel_type == 'CÓ_THỂ_VI_PHẠM':
-                    if is_outgoing:
-                        context_parts.append(f"Áp dụng cho: {related_name}")
-                    else:
-                        context_parts.append(f"Có thể vi phạm: {related_name}")
+                    rel_desc = f"Có thể vi phạm/áp dụng: {related_name}"
                 elif rel_type == 'VIOLATION_OF':
-                    if is_outgoing:
-                        context_parts.append(f"Vi phạm quy định: {related_name}")
-                    else:
-                        context_parts.append(f"Quy định bị vi phạm bởi: {related_name}")
-                elif related_type in ['PENALTY', 'VIOLATION']:
-                    # Nếu là penalty hoặc violation, luôn thêm vào
-                    context_parts.append(f"{related_name}")
+                    rel_desc = f"Vi phạm quy định: {related_name}"
+                else:
+                    # Generic
+                    rel_desc = f"{rel_type}: {related_name}"
+
+                # Add mode and citation
+                parts_str = rel_desc
+                if mode:
+                    parts_str += f" (Mode: {mode})"
+                if citation:
+                    parts_str += f" — {citation}"
+                if law_name:
+                    parts_str += f" — {law_name}"
+                # if has_penalty is not None:
+                #     parts_str += f" — Có mức phạt: {'Có' if has_penalty else 'Không'}"
+
+                context_parts.append(parts_str)
             
             return "; ".join(context_parts[:3])  # Chỉ lấy 3 quan hệ quan trọng nhất
             
@@ -151,19 +189,14 @@ class EntityEmbeddings:
             List of entity dicts với name, type, description, law info
         """
         query = """
-        MATCH (n)
-        WHERE n.name IS NOT NULL
-        RETURN n.name as name,
-               labels(n)[0] as type,
-               n.description as description,
-               id(n) as node_id,
-               n.law_code as law_code,
-               n.law_name as law_name,
-               n.article as article,
-               n.chapter as chapter,
-               n.mode as mode
-        ORDER BY n.name
-        """
+         MATCH (n)
+         WHERE n.name IS NOT NULL
+         RETURN n.name as name,
+             labels(n)[0] as type,
+             n.description as description,
+             id(n) as node_id
+         ORDER BY n.name
+         """
         
         results = self.graph.query(query)
         print(f"Found {len(results)} entities in graph")
@@ -301,18 +334,13 @@ class EntityEmbeddings:
             List of entities với embeddings và law metadata
         """
         query = """
-        MATCH (n)
-        WHERE n.embedding IS NOT NULL
-        RETURN n.name as name,
-               labels(n)[0] as type,
-               n.description as description,
-               n.embedding as embedding,
-               n.law_code as law_code,
-               n.law_name as law_name,
-               n.article as article,
-               n.chapter as chapter,
-               n.mode as mode
-        """
+         MATCH (n)
+         WHERE n.embedding IS NOT NULL
+         RETURN n.name as name,
+             labels(n)[0] as type,
+             n.description as description,
+             n.embedding as embedding
+         """
         
         if limit:
             query += f" LIMIT {limit}"
@@ -355,13 +383,13 @@ class EntityEmbeddings:
         if filter_types:
             entities = [e for e in entities if e['type'] in filter_types]
         
-        # Filter by mode if specified
+        # Relationship-based filters (mode, law_code)
         if filter_mode:
-            entities = [e for e in entities if e.get('mode') == filter_mode]
-        
-        # Filter by law code if specified
+            names_by_mode = self._get_entities_by_rel_property('mode', filter_mode)
+            entities = [e for e in entities if e['name'] in names_by_mode]
         if filter_law_code:
-            entities = [e for e in entities if e.get('law_code') == filter_law_code]
+            names_by_law = self._get_entities_by_rel_property('law_code', filter_law_code)
+            entities = [e for e in entities if e['name'] in names_by_law]
         
         # Calculate similarities
         results = []
@@ -375,12 +403,7 @@ class EntityEmbeddings:
                 'name': entity['name'],
                 'type': entity['type'],
                 'description': entity['description'],
-                'similarity': float(similarity),
-                'law_code': entity.get('law_code'),
-                'law_name': entity.get('law_name'),
-                'article': entity.get('article'),
-                'chapter': entity.get('chapter'),
-                'mode': entity.get('mode')
+                'similarity': float(similarity)
             })
         
         # Sort by similarity và return top_k
@@ -484,6 +507,19 @@ class EntityEmbeddings:
             'coverage_percent': (with_embedding / total * 100) if total > 0 else 0,
             'coverage_by_type': type_coverage
         }
+
+    def _get_entities_by_rel_property(self, prop: str, value: str) -> set:
+        """Helper: get entity names that have relationships with a given property=value"""
+        query = f"""
+        MATCH (n)-[r]-()
+        WHERE r.{prop} = $value
+        RETURN DISTINCT n.name as name
+        """
+        try:
+            rows = self.graph.query(query, {'value': value})
+            return {row['name'] for row in rows}
+        except Exception:
+            return set()
     
     def update_embeddings_for_new_entities(self) -> Dict:
         """
@@ -549,13 +585,10 @@ if __name__ == "__main__":
     print("\n=== Test Semantic Search ===")
     results = embeddings.semantic_search("vi phạm tốc độ trên đường cao tốc", top_k=5)
     for i, r in enumerate(results, 1):
-        article = r.get('article', 'N/A')
-        law_code = r.get('law_code', 'N/A')
         print(f"{i}. {r['name']} ({r['type']}) - {r['similarity']:.3f}")
-        print(f"   {law_code}, Điều {article}")
     
     # Test semantic search with filter
-    print("\n=== Search Vi phạm đường bộ ===")
+    print("\n=== Search Vi phạm đường bộ (lọc theo mode relationships) ===")
     results = embeddings.semantic_search(
         "không đội mũ bảo hiểm", 
         top_k=3, 
@@ -563,7 +596,7 @@ if __name__ == "__main__":
         filter_mode='đường bộ'
     )
     for i, r in enumerate(results, 1):
-        print(f"{i}. {r['name']} - {r['similarity']:.3f} (Điều {r.get('article', 'N/A')})")
+        print(f"{i}. {r['name']} - {r['similarity']:.3f}")
     
     # Test semantic search for penalties
     print("\n=== Search Mức phạt ===")

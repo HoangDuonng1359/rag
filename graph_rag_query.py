@@ -201,7 +201,15 @@ class GraphRAGQuery:
                labels(connected)[0] as type,
                connected.description as description,
                type(r) as relationship_type,
-               r.description as relationship_description,
+             r.description as relationship_description,
+             r.law_name as law_name,
+             r.law_code as law_code,
+             r.chapter as chapter,
+             r.chapter_title as chapter_title,
+             r.article as article,
+             r.clauses as clauses,
+             r.has_penalty as has_penalty,
+             r.mode as mode,
                CASE WHEN startNode(r).name = $entity_name THEN 'outgoing' ELSE 'incoming' END as direction
         """
         
@@ -220,7 +228,15 @@ class GraphRAGQuery:
                 "entity": conn['name'],
                 "entity_type": conn['type'],
                 "direction": conn['direction'],
-                "description": conn['relationship_description']
+                "description": conn['relationship_description'],
+                "law_name": conn.get('law_name'),
+                "law_code": conn.get('law_code'),
+                "chapter": conn.get('chapter'),
+                "chapter_title": conn.get('chapter_title'),
+                "article": conn.get('article'),
+                "clauses": conn.get('clauses'),
+                "has_penalty": conn.get('has_penalty'),
+                "mode": conn.get('mode')
             })
             
             connected_entities.append({

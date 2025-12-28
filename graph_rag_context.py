@@ -1,11 +1,9 @@
-"""
-Graph RAG - Context Builder
-Format retrieved context thành structured prompts cho LLM (Gemini)
-"""
-
 from typing import List, Dict, Optional
 from datetime import datetime
+from context_rag import ContextRAG
 import re
+import json
+import os
 
 
 class ContextBuilder:
@@ -14,14 +12,100 @@ class ContextBuilder:
     Optimized cho Gemini API
     """
     
-    def __init__(self, max_context_length: int = 8000):
+    def __init__(self, max_context_length: int = 8000, chunks_file: Optional[str] = None, include_law_content: bool = True):
         """
         Initialize context builder
         
         Args:
             max_context_length: Max characters cho context (để avoid token limits)
+            chunks_file: Path to chunks_by_clause.jsonl file
+            include_law_content: Có thêm nội dung luật chi tiết vào relationships hay không
         """
         self.max_context_length = max_context_length
+        self.include_law_content = include_law_content
+        #self.rag_context = ContextRAG()
+        
+        # Load chunks from file
+        if chunks_file is None:
+            # Default path
+            chunks_file = os.path.join(
+                os.path.dirname(__file__), 
+                'data', 'chunk', 'chunks_by_clause.jsonl'
+            )
+        
+        self.chunks_dict = self._load_chunks(chunks_file)
+        print(f"Loaded {len(self.chunks_dict)} chunks from {chunks_file}")
+    
+    def _load_chunks(self, chunks_file: str) -> Dict[str, Dict]:
+        """Load chunks từ JSONL file và index bằng ID"""
+        chunks = {}
+        
+        if not os.path.exists(chunks_file):
+            print(f"Warning: Chunks file not found: {chunks_file}")
+            return chunks
+        
+        try:
+            with open(chunks_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    chunk = json.loads(line.strip())
+                    chunks[chunk['id']] = chunk
+        except Exception as e:
+            print(f"Error loading chunks: {e}")
+        
+        return chunks
+    
+    def _find_chunk_content(self, law_code: str, article: int, clauses: Optional[List[int]] = None) -> Optional[str]:
+        """
+        Tìm chunk content dựa trên law_code, article, và clauses
+        
+        Args:
+            law_code: Law code
+            article: Article number
+            clauses: List of clause numbers
+            
+        Returns:
+            Chunk content hoặc None
+        """
+        if not law_code or article is None:
+            return None
+        
+        # Convert law_code: replace / with _
+        law_id = law_code.replace('/', '_')
+        
+        # Build base prefix
+        base_prefix = f"{law_id}_art{article}"
+        
+        # Try to find matching chunks
+        matching_chunks = []
+        
+        if clauses and len(clauses) > 0:
+            # Try to find chunks with specific clauses
+            for clause in clauses:
+                # Pattern: law_code_art{article}_*_khoan{clause} or law_code_art{article}_khoan{clause}
+                # This will match: 168_2024_NĐ-CP_art5_khoan2, 168_2024_NĐ-CP_art5_p2_khoan2, etc.
+                for chunk_id, chunk in self.chunks_dict.items():
+                    if chunk_id.startswith(base_prefix) and f"_khoan{clause}" in chunk_id:
+                        matching_chunks.append(chunk)
+                        break  # Found one chunk for this clause
+        
+        # If no clause-specific chunks found, try article-level chunks
+        if not matching_chunks:
+            for chunk_id, chunk in self.chunks_dict.items():
+                # Exact match or starts with base_prefix and next char is not digit (to avoid art5 matching art50)
+                if chunk_id == base_prefix or (chunk_id.startswith(base_prefix) and 
+                                              len(chunk_id) > len(base_prefix) and 
+                                              chunk_id[len(base_prefix)] in ['_', 'p']):
+                    matching_chunks.append(chunk)
+        
+        # Combine content from matching chunks
+        if matching_chunks:
+            # Sort by chunk_index if available
+            matching_chunks.sort(key=lambda x: x.get('metadata', {}).get('chunk_index', 0))
+            # Combine content
+            combined_content = " ".join(chunk['content'] for chunk in matching_chunks)
+            return combined_content
+        
+        return None
     
     def build_rag_context(
         self,
@@ -30,7 +114,7 @@ class ContextBuilder:
         max_entities: int = 12,
         max_relationships: int = 20,
         include_paths: bool = True,
-        include_sources: bool = True
+        include_sources: bool = True,
     ) -> Dict:
         """
         Build complete RAG context từ retrieval results
@@ -93,7 +177,16 @@ class ContextBuilder:
                 'relation': rel['type'],
                 'target': rel['target'],
                 'description': rel.get('description', ''),
-                'direction': rel.get('direction', 'outgoing')
+                'direction': rel.get('direction', 'outgoing'),
+                # Relationship metadata from graph
+                'mode': rel.get('mode'),
+                'law_name': rel.get('law_name'),
+                'law_code': rel.get('law_code'),
+                'chapter': rel.get('chapter'),
+                'chapter_title': rel.get('chapter_title'),
+                'article': rel.get('article'),
+                'clauses': rel.get('clauses', []),
+                'has_penalty': rel.get('has_penalty')
             })
         
         return formatted
@@ -182,46 +275,49 @@ class ContextBuilder:
         self,
         context: Dict,
         prompt_type: str = "qa",
-        include_instructions: bool = True
+        include_instructions: bool = True,
+        include_law_content: Optional[bool] = None,
+        tranditional_rag_context : ContextRAG = None
     ) -> str:
         """
         Args:
             context: Context từ build_rag_context()
             prompt_type: Loại prompt (qa, summary, explain, timeline)
             include_instructions: Include system instructions
+            include_law_content: Có thêm nội dung luật chi tiết vào relationships (None = dùng default từ __init__)
             
         Returns:
             Formatted prompt string
         """
-        if prompt_type == "qa":
-            return self._format_qa_prompt(context, include_instructions)
-        elif prompt_type == "summary":
-            return self._format_summary_prompt(context, include_instructions)
-        elif prompt_type == "explain":
-            return self._format_explain_prompt(context, include_instructions)
-        elif prompt_type == "timeline":
-            return self._format_timeline_prompt(context, include_instructions)
-        else:
-            return self._format_qa_prompt(context, include_instructions)
+        # Use parameter if provided, otherwise use instance default
+        if include_law_content is None:
+            include_law_content = self.include_law_content
+        
+        return self._format_qa_prompt(context, include_instructions, include_law_content, rag_context=tranditional_rag_context)
     
-    def _format_qa_prompt(self, context: Dict, include_instructions: bool) -> str:
+    def _format_qa_prompt(self, context: Dict, include_instructions: bool, include_law_content: bool = True, 
+                          rag_context : ContextRAG = None ) -> str:
         """Format prompt cho Q&A task"""
         parts = []
         
         if include_instructions:
-            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là trả lời câu hỏi dựa trên thông tin được cung cấp.
+            parts.append("""Bạn là một chuyên gia luật giao thông, Hãy đóng vai là một nhân viên tư vấn luật giao thông. Nhiệm vụ của bạn là trả lời câu hỏi dựa trên dữ liệu luật được cung cấp.
 
 HƯỚNG DẪN:
 - Chỉ sử dụng thông tin từ context được cung cấp
 - Trả lời chính xác, có căn cứ
 - Nếu không có đủ thông tin, hãy nói rõ
-- Sử dụng tiếng Việt tự nhiên và dễ hiểu
+- Sử dụng tiếng Việt tự nhiên và dễ hiểu, không cần chào hỏi
 YÊU CẦU TRẢ LỜI:
 - Trả lời theo dạng đoạn văn mạch lạc
+- Không trả lời nếu thông tin quá mơ hồ hoặc không liên quan
+- Tránh sử dụng các cụm từ như "theo ngữ cảnh đã cho", "dựa trên thông tin được cung cấp"
 - Nêu rõ:
   + Quy định / nội dung chính
-  + Dẫn chứng từ context
-- Cuối câu ghi nguồn: Ví dụ: (Nghị định 168/2024/NĐ-CP, Điều 5)
+  + Dẫn chứng (nếu có)
+  + Giải thích
+- Phải có kết luận cuối cùng (kết luận highlight lên để người đọc dễ nhận biết)
+- Đoạn cuối ghi các nguồn(nếu có, nếu không có, bạn không sử dụng dữ liệu từ các nguồn thì không thêm vào): Ví dụ: Nguồn: Nghị định 168/2024/NĐ-CP, Điều 5, Khoản 2, Luật Trật tự, an toàn giao thông đường bộ \n Nghị định 100/2019/NĐ-CP, Điều 6, Khoản 1.
 
 """)
         parts.append("CONTEXT:")
@@ -233,17 +329,54 @@ YÊU CẦU TRẢ LỜI:
             parts.append(f"\n{i}. {entity['name']} ({entity['type']})")
             if entity['description']:
                 parts.append(f"   Mô tả: {entity['description']}")
-            parts.append(f"   Độ liên quan: {entity['relevance_score']:.3f}")
         
         # Relationships section
-        if context['relationships']:
-            parts.append("\nRELATIONSHIPS:")
-            for i, rel in enumerate(context['relationships'], 1):
-                arrow = "->" if rel['direction'] == 'outgoing' else "<-"
-                parts.append(f"\n{i}. {rel['source']} {arrow} [{rel['relation']}] {arrow} {rel['target']}")
-                if rel['description']:
-                    parts.append(f"   Chi tiết: {rel['description']}")
+        parts.append("\nRELATIONSHIPS:")
+        for i, rel in enumerate(context['relationships'], 1):
+            arrow = "->" if rel['direction'] == 'outgoing' else "<-"
+            parts.append(f"\n{i}. {rel['source']} {arrow} [{rel['relation']}] {arrow} {rel['target']}")
+            if rel['description']:
+                parts.append(f"   Chi tiết: {rel['description']}")
+            
+            # Show relationship metadata if available
+            law_code = rel.get('law_code')
+            law_name = rel.get('law_name', '')
+            article = rel.get('article')
+            clauses = rel.get('clauses')
+            
+            if law_code or law_name:
+                parts.append(f"   Nguồn luật: {law_code or 'N/A'}{' - ' + law_name if law_name else ''}")
+            
+            if article is not None:
+                parts.append(f"   Điều: {article}")
+            
+            if rel.get('chapter') or rel.get('chapter_title'):
+                chapter = rel.get('chapter', '')
+                chapter_title = rel.get('chapter_title', '')
+                parts.append(f"   Chương: {chapter}{' - ' + chapter_title if chapter_title else ''}")
+            
+            if rel.get('mode'):
+                parts.append(f"   Mode: {rel.get('mode')}")
+            
+            if clauses:
+                if isinstance(clauses, list):
+                    clause_str = ", ".join(str(c) for c in clauses)
+                else:
+                    clause_str = str(clauses)
+                parts.append(f"   Khoản: {clause_str}")
+            # cộng thêm vector search 
+        rag_result = rag_context.rag_retrieve(
+            query=context['question'],
+            top_k_dense=10,
+            use_rerank=False,
+            top_n_final=10,
+        )
+        context_from_vector_search = rag_context.build_llm_context_from_hits(rag_result['hits'])
         
+        parts.append("-"*10)
+        parts.append("\nVĂN BẢN LUẬT LIÊN QUAN:")
+        parts.append("\n" + context_from_vector_search)
+
         parts.append("\n" + "-" * 10)
         if context.get('paths'):
             parts.append("\nCONNECTIONS (Kết nối):")
@@ -252,206 +385,12 @@ YÊU CẦU TRẢ LỜI:
                 parts.append(f"\n{i}. {path['from']} đến {path['to']}: {route_str}")
         
         parts.append("\n" + "-" * 10)
-        
-        # Source content section
-        if context.get('sources'):
-            parts.append("\nSOURCE CONTENT:")
-            for i, source in enumerate(context['sources'], 1):
-                parts.append(f"\n{i}. {source['citation']}")
-                if 'content' in source:
-                    parts.append(f"{source['content'][:1500]}...")  # Limit mỗi page
-        
-        parts.append("\n" + "-" * 10)
         parts.append(f"\nCÂU HỎI: {context['question']}")
         
         full_prompt = "\n".join(parts)
         
         return full_prompt
     
-    def _format_summary_prompt(self, context: Dict, include_instructions: bool) -> str:
-        """Format prompt cho summarization task"""
-        parts = []
-        
-        if include_instructions:
-            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là tóm tắt thông tin từ dữ liệu sau.
-
-HƯỚNG DẪN:
-- Tạo tóm tắt ngắn gọn, súc tích (3-5 câu)
-- Bao gồm các thông tin chính: QUY ĐỊNH, MỨC PHẠT, ĐỐI TƯỢNG ÁP DỤNG
-- Highlight các entities và relationships quan trọng
-- Sử dụng thứ tự logic nếu có
-- Viết bằng tiếng Việt tự nhiên
-""")
-        
-        parts.append("CONTEXT:")
-        parts.append("")
-        
-        # Compact entity list
-        parts.append("KEY ENTITIES:")
-        entity_by_type = {}
-        for entity in context['entities']:
-            etype = entity['type']
-            if etype not in entity_by_type:
-                entity_by_type[etype] = []
-            entity_by_type[etype].append(entity['name'])
-        
-        for etype, names in entity_by_type.items():
-            parts.append(f"  {etype}: {', '.join(names[:5])}")
-        
-        parts.append("")
-        parts.append("KEY RELATIONSHIPS:")
-        for i, rel in enumerate(context['relationships'][:10], 1):
-            parts.append(f"  {i}. {rel['source']} --[{rel['relation']}]--> {rel['target']}")
-        
-        parts.append("\n" + "=" * 70)
-        parts.append(f"\nYÊU CẦU: {context['question']}")
-        parts.append("\nTÓM TẮT:")
-        
-        return "\n".join(parts)
-    
-    def _format_explain_prompt(self, context: Dict, include_instructions: bool) -> str:
-        """Format prompt cho explanation task"""
-        parts = []
-        
-        if include_instructions:
-            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là giải thích mối quan hệ và bối cảnh pháp lý.
-
-HƯỚNG DẪN:
-- Giải thích rõ ràng mối quan hệ giữa các entities
-- Cung cấp bối cảnh pháp lý đầy đủ
-- Phân tích quy định và hậu quả
-- Sử dụng ví dụ cụ thể từ context
-- Viết theo phong cách giáo dục, dễ hiểu
-""")
-        
-        parts.append("CONTEXT:")
-        parts.append("")
-        
-        # Full entities
-        parts.append("ENTITIES:")
-        for i, entity in enumerate(context['entities'][:8], 1):
-            parts.append(f"\n{i}. {entity['name']} ({entity['type']})")
-            if entity['description']:
-                parts.append(f"   {entity['description']}")
-        
-        # Full relationships
-        parts.append("\n\nRELATIONSHIPS:")
-        for i, rel in enumerate(context['relationships'][:15], 1):
-            parts.append(f"{i}. {rel['source']} --[{rel['relation']}]--> {rel['target']}")
-            if rel['description']:
-                parts.append(f"   {rel['description']}")
-        
-        # Paths for deeper understanding
-        if context.get('paths'):
-            parts.append("\n\nCONNECTIONS:")
-            for path in context['paths']:
-                route = " → ".join(path['route'])
-                parts.append(f"- {route}")
-        
-        parts.append("\n" + "=" * 70)
-        parts.append(f"\nCÂU HỎI: {context['question']}")
-        parts.append("\nGIẢI THÍCH CHI TIẾT:")
-        
-        return "\n".join(parts)
-    
-    def _format_timeline_prompt(self, context: Dict, include_instructions: bool) -> str:
-        """Format prompt cho timeline construction"""
-        parts = []
-        
-        if include_instructions:
-            parts.append("""Bạn là một chuyên gia luật giao thông Việt Nam. Nhiệm vụ của bạn là tạo danh sách các quy định theo mức độ nghiêm trọng.
-
-HƯỚNG DẪN:
-- Sắp xếp quy định theo mức phạt hoặc mức độ vi phạm
-- Ghi rõ mức phạt/hình thức xử lý cho mỗi vi phạm
-- Mô tả ngắn gọn mỗi quy định
-- Highlight các điểm quan trọng
-- Format: Vi phạm: Mức phạt - Mô tả
-""")
-        
-        parts.append("=" * 70)
-        parts.append("CONTEXT:")
-        parts.append("=" * 70)
-        parts.append("")
-        
-        # Filter time entities
-        time_entities = [e for e in context['entities'] if e['type'] == 'TIME']
-        event_entities = [e for e in context['entities'] if e['type'] == 'EVENT']
-        
-        if time_entities:
-            parts.append("THỜI GIAN:")
-            for entity in time_entities:
-                parts.append(f"  - {entity['name']}: {entity['description']}")
-        
-        parts.append("\nSỰ KIỆN:")
-        for entity in event_entities:
-            parts.append(f"  - {entity['name']}: {entity['description']}")
-        
-        parts.append("\nQUAN HỆ:")
-        for rel in context['relationships'][:15]:
-            parts.append(f"  - {rel['source']} → {rel['target']} ({rel['relation']})")
-        
-        parts.append("\n" + "=" * 70)
-        parts.append(f"\nYÊU CẦU: {context['question']}")
-        parts.append("\nTIMELINE:")
-        
-        return "\n".join(parts)
-    
-    def create_multi_turn_context(
-        self,
-        conversation_history: List[Dict],
-        current_context: Dict,
-        max_history: int = 3
-    ) -> str:
-        """
-        Tạo context cho multi-turn conversation
-        
-        Args:
-            conversation_history: List of {question, answer} dicts
-            current_context: Current retrieval context
-            max_history: Max previous turns to include
-            
-        Returns:
-            Formatted context với history
-        """
-        parts = []
-        
-        parts.append("CONVERSATION HISTORY:")
-        parts.append("=" * 70)
-        
-        # Include recent history
-        recent_history = conversation_history[-max_history:] if conversation_history else []
-        
-        for i, turn in enumerate(recent_history, 1):
-            parts.append(f"\nTurn {i}:")
-            parts.append(f"Q: {turn['question']}")
-            parts.append(f"A: {turn['answer'][:200]}...")  # Truncate long answers
-        
-        if not recent_history:
-            parts.append("(First question)")
-        
-        parts.append("\n" + "=" * 70)
-        parts.append("CURRENT CONTEXT:")
-        parts.append("=" * 70)
-        
-        # Add current context
-        parts.append(self.format_for_gemini(current_context, prompt_type="qa", include_instructions=False))
-        
-        return "\n".join(parts)
-    
-    def estimate_token_count(self, text: str) -> int:
-        """
-        Ước tính token count (rough estimate)
-        Vietnamese: ~1 token per 3-4 characters
-        
-        Args:
-            text: Text to estimate
-            
-        Returns:
-            Estimated token count
-        """
-        # Rough estimate: 1 token ≈ 3.5 characters for Vietnamese
-        return len(text) // 4
     
     def truncate_to_token_limit(
         self,
@@ -474,12 +413,7 @@ HƯỚNG DẪN:
         # Gradually reduce less important elements
         while True:
             # Format và estimate tokens
-            formatted = self.format_for_gemini(truncated, prompt_type="qa")
-            estimated_tokens = self.estimate_token_count(formatted)
-            
-            if estimated_tokens <= max_tokens:
-                break
-            
+            formatted = self.format_for_gemini(truncated, prompt_type="qa", tranditional_rag_context=None)
             # Reduce elements
             if len(truncated['relationships']) > 10:
                 truncated['relationships'] = truncated['relationships'][:10]
@@ -495,34 +429,3 @@ HƯỚNG DẪN:
                 break
         
         return truncated
-    
-    def add_examples_to_prompt(
-        self,
-        base_prompt: str,
-        examples: List[Dict],
-        max_examples: int = 2
-    ) -> str:
-        """
-        Add few-shot examples to prompt
-        
-        Args:
-            base_prompt: Base prompt
-            examples: List of {question, answer} examples
-            max_examples: Max examples to include
-            
-        Returns:
-            Prompt với examples
-        """
-        if not examples:
-            return base_prompt
-        
-        parts = [base_prompt]
-        parts.append("VÍ DỤ:")
-        for i, example in enumerate(examples[:max_examples], 1):
-            parts.append(f"\nVí dụ {i}:")
-            parts.append(f"Câu hỏi: {example['question']}")
-            parts.append(f"Trả lời: {example['answer']}")
-        
-        parts.append("BÂY GIỜ HÃY TRẢ LỜI CÂU HỎI HIỆN TẠI THEO CÁCH TƯƠNG TỰ:")
-        
-        return "\n".join(parts)

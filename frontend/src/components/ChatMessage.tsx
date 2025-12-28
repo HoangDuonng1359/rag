@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Message } from '../services/api';
 
 interface ChatMessageProps {
@@ -56,10 +57,10 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest }) =
         <div className="max-w-[80%] bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-md">
           <p className="text-sm whitespace-pre-wrap break-words">{message.question}</p>
           <span className="text-xs text-blue-200 mt-1 block">
-            {/* {new Date(message.timestamp).toLocaleTimeString('vi-VN', {
+            {new Date(message.timestamp).toLocaleTimeString('vi-VN', {
               hour: '2-digit',
               minute: '2-digit',
-            })} */}
+            })}
           </span>
         </div>
       </div>
@@ -75,15 +76,33 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest }) =
                 </svg>
               </div>
               <div className="flex-1">
-                <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-                  {displayedAnswer}
+                <div className="text-sm break-words leading-relaxed">
+                  <ReactMarkdown
+                    components={{
+                      p: ({node, ...props}) => <p className="mb-2" {...props} />,
+                      ul: ({node, ...props}) => <ul className="list-disc list-inside mb-2" {...props} />,
+                      ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-2" {...props} />,
+                      li: ({node, ...props}) => <li className="mb-1" {...props} />,
+                      h1: ({node, ...props}) => <h1 className="text-lg font-bold mb-2" {...props} />,
+                      h2: ({node, ...props}) => <h2 className="text-base font-bold mb-2" {...props} />,
+                      h3: ({node, ...props}) => <h3 className="text-sm font-bold mb-1" {...props} />,
+                      code: ({node, inline, ...props}: any) => 
+                        inline ? 
+                          <code className="bg-gray-200 px-1 py-0.5 rounded text-xs" {...props} /> :
+                          <pre className="bg-gray-100 p-2 rounded mb-2 overflow-x-auto"><code {...props} /></pre>,
+                      blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-gray-300 pl-4 italic mb-2" {...props} />,
+                      a: ({node, ...props}) => <a className="text-blue-600 underline" {...props} />,
+                    }}
+                  >
+                    {displayedAnswer}
+                  </ReactMarkdown>
                   {isTyping && <span className="inline-block w-1 h-4 bg-gray-600 ml-1 animate-pulse" />}
-                </p>
+                </div>
                 <span className="text-xs text-gray-500 mt-1 block">
-                  {/* {modelLabel} • {new Date(message.timestamp).toLocaleTimeString('vi-VN', {
+                  {modelLabel} • {new Date(message.timestamp).toLocaleTimeString('vi-VN', {
                     hour: '2-digit',
                     minute: '2-digit',
-                  })} */}
+                  })}
                 </span>
               </div>
             </div>

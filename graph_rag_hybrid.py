@@ -327,6 +327,7 @@ class HybridRetriever:
         entity_names = {e['name'] for e in entities}
         relationships = []
         seen_rels = set()
+        important_types = {"PENALTY", "VIOLATION", "REGULATION"}
         
         for entity in entities[:10]:  # Limit to top 10 to avoid too many queries
             # Get neighborhood
@@ -341,9 +342,10 @@ class HybridRetriever:
             for rel_type, connections in neighborhood['relationships'].items():
                 for conn in connections:
                     target = conn['entity']
+                    target_type = conn.get('entity_type')
                     
-                    # Only include if target is in our selected entities
-                    if target in entity_names:
+                    # Include if target is selected OR target is an important type (e.g., PENALTY/VIOLATION/REGULATION)
+                    if target in entity_names or (target_type in important_types):
                         rel_key = (entity['name'], target, rel_type)
                         
                         if rel_key not in seen_rels:
@@ -353,7 +355,16 @@ class HybridRetriever:
                                 'target': target,
                                 'type': rel_type,
                                 'description': conn.get('description', ''),
-                                'direction': conn.get('direction', 'outgoing')
+                                'direction': conn.get('direction', 'outgoing'),
+                                # Pass through law metadata when available
+                                'law_name': conn.get('law_name'),
+                                'law_code': conn.get('law_code'),
+                                'chapter': conn.get('chapter'),
+                                'chapter_title': conn.get('chapter_title'),
+                                'article': conn.get('article'),
+                                'clauses': conn.get('clauses'),
+                                'has_penalty': conn.get('has_penalty'),
+                                'mode': conn.get('mode')
                             })
         
         return relationships

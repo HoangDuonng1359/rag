@@ -3,7 +3,8 @@ from typing import List, Dict, Optional, Generator
 import time
 import google.generativeai as genai
 from dotenv import load_dotenv
-
+from context_rag import ContextRAG
+from graph_rag_context import ContextBuilder
 load_dotenv()
 
 class GeminiRAG:
@@ -14,7 +15,7 @@ class GeminiRAG:
     def __init__(
         self,
         hybrid_retriever,
-        context_builder,
+        context_builder: ContextBuilder = None,
         api_key: Optional[str] = None,
         model_name: str = "gemini-2.5-flash"
     ):
@@ -72,7 +73,9 @@ class GeminiRAG:
         retrieval_params: Optional[Dict] = None,
         context_params: Optional[Dict] = None,
         temperature: float = 0.7,
-        max_tokens: int = 8192  
+        max_tokens: int = 8192,
+        include_law_content: bool = False,
+        tranditional_rag_context: ContextRAG = None
     ) -> Dict:
         """
         Generate answer cho question sử dụng RAG pipeline
@@ -94,13 +97,13 @@ class GeminiRAG:
         retrieval_params = retrieval_params or {
             'top_k': 10,
             'vector_top_k': 5,
-            'expansion_depth': 1
+            'expansion_depth': 1,
         }
         
         context_params = context_params or {
             'max_entities': 10,
-            'max_relationships': 15,
-            'include_paths': False
+            'max_relationships': 10,
+            'include_paths': False,
         }
         
         # Retrieve context
@@ -120,7 +123,7 @@ class GeminiRAG:
         prompt = self.builder.format_for_gemini(
             context=rag_context,
             prompt_type=prompt_type,
-            include_instructions=True
+            include_law_content=include_law_content, tranditional_rag_context=tranditional_rag_context
         )
         print(prompt)
         # Update generation config
@@ -219,14 +222,14 @@ class GeminiRAG:
         
         # Default parameters
         retrieval_params = retrieval_params or {
-            'top_k': 10,
-            'vector_top_k': 5,
+            'top_k': 20,
+            'vector_top_k': 10,
             'expansion_depth': 1
         }
         
         context_params = context_params or {
-            'max_entities': 10,
-            'max_relationships': 15,
+            'max_entities': 20,
+            'max_relationships': 20,
             'include_paths': False
         }
         
@@ -315,8 +318,8 @@ class GeminiRAG:
         # Retrieve context
         retrieval_context = self.retriever.retrieve(
             question=question,
-            top_k=10,
-            vector_top_k=5
+            top_k=20,
+            vector_top_k=10
         )
         
         # Build context
@@ -435,10 +438,9 @@ if __name__ == "__main__":
     from graph_rag_context import ContextBuilder
     
     # Setup
-    NEO4J_URI="neo4j+s://41ab799a.databases.neo4j.io"
+    NEO4J_URI="neo4j+s://efe5c094.databases.neo4j.io"
     NEO4J_USERNAME="neo4j"
-    NEO4J_PASSWORD="xmriUzmvo9dSAyc10u9mpB7nzyQHMZFooKqH5yBP2d4"
-    
+    NEO4J_PASSWORD="GW7dZdXYlFaklMMPzmwOHBXSzt1g7zVPHDkB6wcnk5w"
     graph = Neo4jGraph(
         url=NEO4J_URI,
         username=NEO4J_USERNAME,
@@ -459,9 +461,9 @@ if __name__ == "__main__":
     )
     # Test
     result = gemini_rag.generate_answer(
-        question="Mức phạt vi phạm vượt đèn đỏ đối với xe máy là bao nhiêu?",
+        question="Tôi đi đua xe trái phép bị xử lý như thế nào?",
         prompt_type="qa",
-        max_tokens=8192
+        max_tokens=8192, include_law_content=False
     )
     
     print("\n=== ANSWER ===")
