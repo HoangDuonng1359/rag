@@ -53,9 +53,7 @@ class GraphRAGQuery:
             MATCH (n:{entity_type} {{name: $name}})
             RETURN n.name as name, 
                    labels(n)[0] as type,
-                   n.description as description,
-                   n.first_seen_chapter as chapter,
-                   n.first_seen_page as page
+                   n.description as description
             LIMIT 1
             """
         else:
@@ -63,9 +61,7 @@ class GraphRAGQuery:
             MATCH (n {name: $name})
             RETURN n.name as name,
                    labels(n)[0] as type,
-                   n.description as description,
-                   n.first_seen_chapter as chapter,
-                   n.first_seen_page as page
+                   n.description as description
             LIMIT 1
             """
         
@@ -88,9 +84,7 @@ class GraphRAGQuery:
         WHERE toLower(n.name) CONTAINS toLower($search_term)
         RETURN n.name as name,
                labels(n)[0] as type,
-               n.description as description,
-               n.first_seen_page as first_seen_page,
-               n.first_seen_chapter as first_seen_chapter
+               n.description as description
         LIMIT $limit
         """
         
@@ -121,8 +115,6 @@ class GraphRAGQuery:
         RETURN DISTINCT related.name as name,
                labels(related)[0] as type,
                related.description as description,
-               related.first_seen_page as first_seen_page,
-               related.first_seen_chapter as first_seen_chapter,
                [rel in rels | {{
                    type: type(rel),
                    description: rel.description
@@ -195,9 +187,7 @@ class GraphRAGQuery:
         MATCH (n {name: $entity_name})
         RETURN n.name as name,
                labels(n)[0] as type,
-               n.description as description,
-               n.first_seen_chapter as chapter,
-               n.first_seen_page as page
+               n.description as description
         """
         entity_info = self.graph.query(entity_query, {"entity_name": entity_name})
         
@@ -259,9 +249,7 @@ class GraphRAGQuery:
         query = f"""
         MATCH (n:{entity_type})
         RETURN n.name as name,
-               n.description as description,
-               n.first_seen_chapter as chapter,
-               n.first_seen_page as page
+               n.description as description
         ORDER BY n.name
         LIMIT $limit
         """

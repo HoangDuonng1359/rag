@@ -466,22 +466,3 @@ if __name__ == "__main__":
     
     print("\n=== ANSWER ===")
     print(result['answer'])
-    
-    print("\n=== METADATA ===")
-    print(f"Entities used: {result['metadata']['entities_used']}")
-    print(f"Relationships used: {result['metadata']['relationships_used']}")
-    print(f"Total time: {result['metadata']['total_time']:.2f}s")
-    
-    # Test với câu hỏi phức tạp hơn
-    print("\n" + "="*70)
-    print("=== TEST 2: Câu hỏi phức tạp ===")
-    print("="*70)
-    
-    result2 = gemini_rag.generate_answer(
-        question="So sánh mức phạt không đội mũ bảo hiểm giữa xe máy và ô tô",
-        prompt_type="explain",
-        max_tokens=8192
-    )
-    
-    print("\n=== ANSWER ===")
-    print(result2['answer'])

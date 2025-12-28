@@ -207,9 +207,7 @@ class HybridRetriever:
                         'description': rel_entity['description'],
                         'distance': rel_entity['distance'],
                         'source_seed': entity_name,
-                        'source_similarity': seed['similarity'],
-                        'first_seen_page': rel_entity.get('first_seen_page'),
-                        'first_seen_chapter': rel_entity.get('first_seen_chapter')
+                        'source_similarity': seed['similarity']
                     })
         
         return expanded
@@ -273,9 +271,7 @@ class HybridRetriever:
                 'vector_score': vector_score,
                 'graph_score': graph_score,
                 'type_score': type_score,
-                'distance': distance,
-                'first_seen_page': entity.get('first_seen_page'),
-                'first_seen_chapter': entity.get('first_seen_chapter')
+                'distance': distance
             })
         
         # add seed entities với full scores

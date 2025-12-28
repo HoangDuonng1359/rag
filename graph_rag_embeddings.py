@@ -34,25 +34,114 @@ class EntityEmbeddings:
         self.embedding_dim = self.model.get_sentence_embedding_dimension()
         print(f"Model loaded! Embedding dimension: {self.embedding_dim}")
     
-    def _create_entity_text(self, entity: Dict) -> str:
+    def _create_entity_text(self, entity: Dict, include_relationships: bool = True) -> str:
         """
         Tạo text representation của entity để embed
         
         Args:
             entity: Dict với keys: name, type, description
+            include_relationships: Bao gồm thông tin từ relationships để làm giàu context
             
         Returns:
-            String combines name, type, và description
+            String combines name, type, description và related entities
         """
         name = entity.get('name', '')
         entity_type = entity.get('type', '')
         description = entity.get('description', '')
         
-        # Format: "Tên (Loại): Mô tả"
+        # Base text
         if description:
-            return f"{name} ({entity_type}): {description}"
+            text = f"{name} ({entity_type}): {description}"
         else:
-            return f"{name} ({entity_type})"
+            text = f"{name} ({entity_type})"
+        
+        # Bổ sung thông tin từ relationships để làm giàu context
+        if include_relationships:
+            related_info = self._get_related_context(name)
+            if related_info:
+                text += f". {related_info}"
+        
+        return text
+    
+    def _get_related_context(self, entity_name: str, max_relations: int = 5) -> str:
+        """
+        Lấy thông tin ngữ cảnh từ các relationships quan trọng
+        
+        Args:
+            entity_name: Tên entity
+            max_relations: Số lượng relationships tối đa
+            
+        Returns:
+            String mô tả các relationships quan trọng
+        """
+        # Ưu tiên các relationship types quan trọng (cả 2 chiều)
+        query = """
+        MATCH (n {name: $name})-[r]-(related)
+        RETURN type(r) as rel_type,
+               related.name as related_name,
+               labels(related)[0] as related_type,
+               startNode(r) = n as is_outgoing
+        ORDER BY 
+            CASE type(r)
+                WHEN 'BỊ_PHẠT' THEN 1
+                WHEN 'PENALTY_FOR' THEN 1
+                WHEN 'CÓ_THỂ_VI_PHẠM' THEN 2
+                WHEN 'VIOLATION_OF' THEN 2
+                WHEN 'APPLIES_TO' THEN 3
+                ELSE 4
+            END
+        LIMIT $limit
+        """
+        
+        try:
+            results = self.graph.query(query, {
+                'name': entity_name,
+                'limit': max_relations
+            })
+            
+            if not results:
+                return ""
+            
+            # Tạo mô tả ngắn gọn
+            context_parts = []
+            for r in results:
+                rel_type = r['rel_type']
+                related_name = r['related_name']
+                related_type = r['related_type']
+                is_outgoing = r['is_outgoing']
+                
+                # Format khác nhau cho từng loại relationship và chiều
+                if rel_type == 'BỊ_PHẠT':
+                    if is_outgoing:
+                        # Violation -> Penalty
+                        context_parts.append(f"Mức phạt: {related_name}")
+                    else:
+                        # Penalty <- Violation  
+                        context_parts.append(f"Vi phạm: {related_name}")
+                elif rel_type == 'PENALTY_FOR':
+                    if is_outgoing:
+                        context_parts.append(f"Phạt cho vi phạm: {related_name}")
+                    else:
+                        context_parts.append(f"Mức phạt: {related_name}")
+                elif rel_type == 'CÓ_THỂ_VI_PHẠM':
+                    if is_outgoing:
+                        context_parts.append(f"Áp dụng cho: {related_name}")
+                    else:
+                        context_parts.append(f"Có thể vi phạm: {related_name}")
+                elif rel_type == 'VIOLATION_OF':
+                    if is_outgoing:
+                        context_parts.append(f"Vi phạm quy định: {related_name}")
+                    else:
+                        context_parts.append(f"Quy định bị vi phạm bởi: {related_name}")
+                elif related_type in ['PENALTY', 'VIOLATION']:
+                    # Nếu là penalty hoặc violation, luôn thêm vào
+                    context_parts.append(f"{related_name}")
+            
+            return "; ".join(context_parts[:3])  # Chỉ lấy 3 quan hệ quan trọng nhất
+            
+        except Exception as e:
+            # Nếu lỗi, bỏ qua và chỉ dùng description gốc
+            return ""
     
     def get_all_entities(self) -> List[Dict]:
         """

@@ -40,3 +40,8 @@ pytest-asyncio>=0.21.0
 # Evaluation
 matplotlib>=3.7.0
 accelerate>=0.20.0
+
+
+fastapi 
+uvicorn
+
