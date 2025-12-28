@@ -85,7 +85,7 @@ async def startup_event():
         collection_name="vn_traffic_law",
         gemini_api_key=gemini_key,
         gemini_model="gemini-2.5-flash",
-        use_rerank=True,
+        use_rerank=False,
         embedding_model=shared_embedding_model  # Dùng chung model đã load
     )
     
@@ -242,7 +242,7 @@ def ask_question_rag(message: RAGMessage):
             question=message.question,
             top_k_dense=30,
             top_n_final=10,
-            max_tokens=2048
+            max_tokens=4096
         )
         
         total_time = time.time() - start_time
