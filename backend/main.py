@@ -29,10 +29,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Neo4j configuration
-NEO4J_URI = "neo4j+s://41ab799a.databases.neo4j.io"
-NEO4J_USERNAME = "neo4j"
-NEO4J_PASSWORD = "xmriUzmvo9dSAyc10u9mpB7nzyQHMZFooKqH5yBP2d4"
+# Neo4j configuration - get from environment variables or use defaults
+NEO4J_URI = os.environ.get("NEO4J_URI", "neo4j+s://41ab799a.databases.neo4j.io")
+NEO4J_USERNAME = os.environ.get("NEO4J_USERNAME", "neo4j")
+NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD", "xmriUzmvo9dSAyc10u9mpB7nzyQHMZFooKqH5yBP2d4")
 
 # Global instances (khởi tạo 1 lần khi start server)
 graph = None
@@ -62,7 +62,7 @@ async def startup_event():
     builder = ContextBuilder()
     
     # Save shared embedding model từ Graph RAG
-    shared_embedding_model = embeddings.model  # Chú ý: là .model chứ không phải .embedding_model
+    shared_embedding_model = embeddings.model 
     
     # Initialize Gemini RAG
     gemini_rag = GeminiRAG(
@@ -173,7 +173,7 @@ def ask_question(message: GraphRAGMessage):
         result = gemini_rag.generate_answer(
             question=message.question,
             prompt_type="qa",
-            max_tokens=8192
+            max_tokens=8192, include_law_content=True, tranditional_rag_context=context_rag
         )
         
         # Save to session history
@@ -197,6 +197,7 @@ def ask_question(message: GraphRAGMessage):
         )
         
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Error generating answer: {str(e)}")
 
 @app.get("/api/session/{session_id}")
@@ -238,11 +239,11 @@ def ask_question_rag(message: RAGMessage):
         start_time = time.time()
         
         # Generate answer using Context RAG
-        result = context_rag.answer_question(
+        result = context_rag.rag_qa(
             question=message.question,
             top_k_dense=30,
             top_n_final=10,
-            max_tokens=4096
+            enable_rewrite=False
         )
         
         total_time = time.time() - start_time
@@ -267,6 +268,7 @@ def ask_question_rag(message: RAGMessage):
         )
         
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Error generating answer: {str(e)}")
 
 @app.delete("/api/session/{session_id}")
