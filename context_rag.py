@@ -230,7 +230,7 @@ class ContextRAG:
             "normalized_query": normalized_query,
         }
     
-    def call_gemini(self, prompt: str, max_tokens: int = 2048) -> str:
+    def call_gemini(self, prompt: str, max_tokens: int = 4096) -> str:
         """
         Gọi Gemini API để tạo câu trả lời.
         
@@ -244,15 +244,39 @@ class ContextRAG:
         if not self.gemini_model:
             raise ValueError("Gemini model not configured. Please provide API key.")
         
+        # Debug: in độ dài prompt
+        prompt_length = len(prompt)
+        print(f"\n[DEBUG] Prompt length: {prompt_length} chars")
+        print(f"[DEBUG] Max output tokens: {max_tokens}")
+        
         resp = self.gemini_model.generate_content(
             prompt,
             generation_config=genai.types.GenerationConfig(
                 max_output_tokens=max_tokens,
-                temperature=0.4,
-                top_p=0.9,
+                temperature=0.3,
+                top_p=0.95,
             ),
+            safety_settings=[
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+            ]
         )
-        return (resp.text or "").strip()
+        
+        # Debug: in thông tin về response
+        print(f"[DEBUG] Response candidates: {len(resp.candidates)}")
+        if resp.candidates:
+            candidate = resp.candidates[0]
+            print(f"[DEBUG] Finish reason: {candidate.finish_reason}")
+            print(f"[DEBUG] Safety ratings: {candidate.safety_ratings}")
+            if hasattr(candidate, 'token_count'):
+                print(f"[DEBUG] Token count: {candidate.token_count}")
+        
+        response_text = (resp.text or "").strip()
+        print(f"[DEBUG] Response length: {len(response_text)} chars")
+        
+        return response_text
     
     def build_qa_prompt(self, question: str, context: str) -> str:
         """
@@ -271,13 +295,18 @@ Chỉ dùng thông tin có trong CÁC ĐOẠN LUẬT (CONTEXT) để trả lời
 
 Lưu ý về thuật ngữ: "xe mô tô", "xe gắn máy", "xe máy" và "các loại xe tương tự" KHÁC với "xe máy chuyên dùng". Không được coi "xe máy chuyên dùng" là "xe mô tô/xe gắn máy/xe máy". Khi so sánh hành vi với context, phải căn cứ đúng loại phương tiện được nêu.
 
-FORMAT TRẢ LỜI (bắt buộc, một đoạn duy nhất, phải chứa đủ cả KẾT LUẬN, CĂN CỨ và GIẢI THÍCH, nếu thiếu phần nào coi như trả lời sai):
-- Bắt đầu bằng: "KẾT LUẬN: CÓ PHẠT." hoặc "KẾT LUẬN: KHÔNG PHẠT." hoặc "KẾT LUẬN: KHÔNG ĐỦ THÔNG TIN."
-- Ngay sau đó: "Căn cứ: Luật [tên luật] ([mã luật]), Điều [số điều], Khoản [số khoản]."
-- Sau đó, bắt đầu bằng "Giải thích:" và trong 1–3 câu:
-  (1) Nêu ngắn gọn hành vi trong câu hỏi;
-  (2) Nêu nội dung chính của khoản/điểm áp dụng trong context;
-  (3) Nêu rõ vì sao hành vi đó (có hoặc không) thỏa điều kiện của khoản/điểm này (nếu kết luận CÓ PHẠT thì phải nói rõ TẠI SAO bị phạt).
+FORMAT TRẢ LỜI - BẮT BUỘC PHẢI ĐẦY ĐỦ 3 PHẦN:
+1. KẾT LUẬN: Bắt đầu bằng "KẾT LUẬN: CÓ PHẠT." hoặc "KẾT LUẬN: KHÔNG PHẠT." hoặc "KẾT LUẬN: KHÔNG ĐỦ THÔNG TIN."
+
+2. CĂN CỨ: Ngay sau đó viết "Căn cứ: Luật [tên luật] ([mã luật]), Điều [số điều], Khoản [số khoản]."
+
+3. GIẢI THÍCH: Sau đó BẮT BUỘC phải có phần "Giải thích:" với 2-4 câu giải thích rõ ràng:
+   - Nêu ngắn gọn hành vi trong câu hỏi
+   - Nêu nội dung chính của khoản/điểm áp dụng trong context
+   - Nêu rõ vì sao hành vi đó (có hoặc không) thỏa điều kiện của khoản/điểm này
+   - Nếu kết luận CÓ PHẠT thì PHẢI nêu cụ thể mức phạt (nếu có trong context)
+
+QUAN TRỌNG: PHẢI VIẾT ĐẦY ĐỦ CẢ 3 PHẦN TRÊN. KHÔNG ĐƯỢC DỪNG GIỮ CHỪNG.
 
 CÂU HỎI GỐC:
 \"\"\"{question}\"\"\"
@@ -292,7 +321,7 @@ CÁC ĐOẠN LUẬT (CONTEXT):
         question: str,
         top_k_dense: int = 30,
         top_n_final: int = 10,
-        max_tokens: int = 2048,
+        max_tokens: int = 4096,
     ) -> Dict[str, Any]:
         """
         Trả lời câu hỏi bằng RAG + Gemini.

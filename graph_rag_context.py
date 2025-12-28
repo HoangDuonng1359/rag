@@ -221,7 +221,7 @@ YÊU CẦU TRẢ LỜI:
 - Nêu rõ:
   + Quy định / nội dung chính
   + Dẫn chứng từ context
-- Cuối câu ghi nguồn: (Nguồn: Điều 1 Bộ Luật Giao Thông Đường Bộ)
+- Cuối câu ghi nguồn: Ví dụ: (Nghị định 168/2024/NĐ-CP, Điều 5)
 
 """)
         parts.append("CONTEXT:")

@@ -72,7 +72,7 @@ class GeminiRAG:
         retrieval_params: Optional[Dict] = None,
         context_params: Optional[Dict] = None,
         temperature: float = 0.7,
-        max_tokens: int = 8192  # Tăng lên 8192 để đủ cho câu trả lời đầy đủ
+        max_tokens: int = 8192  
     ) -> Dict:
         """
         Generate answer cho question sử dụng RAG pipeline
