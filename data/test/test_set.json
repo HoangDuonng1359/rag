@@ -1,0 +1,447 @@
+[
+    {
+        "id": "q_001",
+        "question": "Tôi uống bia trong bữa tiệc rồi tự lái ô tô về nhà, không gây tai nạn. Như vậy có bị phạt không?",
+        "ground_truth": "Có, vẫn bị xử phạt. Mức phạt: Phạt tiền 6.000.000 – 8.000.000 đồng, tước giấy phép lái xe 10 – 12 tháng. Giải thích: Điều khiển ô tô khi trong cơ thể có nồng độ cồn, quy định tại điểm c khoản 6 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_002",
+        "question": "Tôi chỉ uống chút bia rồi chạy xe máy đi gần nhà, bị kiểm tra thì sao?",
+        "ground_truth": "Vẫn bị xử phạt. Mức phạt: Phạt tiền 2.000.000 – 3.000.000 đồng, tước giấy phép lái xe 10 – 12 tháng. Giải thích: Điều khiển xe mô tô có nồng độ cồn, theo điểm b khoản 8 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_003",
+        "question": "Uống rượu xong tôi đạp xe về nhà cho an toàn, có bị phạt không?",
+        "ground_truth": "Có. Mức phạt: Phạt tiền 100.000 – 200.000 đồng. Giải thích: Người điều khiển xe thô sơ có nồng độ cồn, theo khoản 1 Điều 9 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_004",
+        "question": "Tôi uống rượu rồi đi bộ về, loạng choạng giữa đường làm xe khác phải tránh. Có bị xử lý không?",
+        "ground_truth": "Có thể bị xử phạt. Mức phạt: Phạt tiền 150.000 – 250.000 đồng. Giải thích: Người đi bộ say rượu gây cản trở, mất an toàn giao thông, theo điểm a khoản 1 Điều 10 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_005",
+        "question": "Tôi uống rượu nhiều rồi vẫn chạy xe máy, không gây tai nạn. Mức phạt thế nào?",
+        "ground_truth": "Có thể bị xử phạt nặng. Mức phạt: Mức độ nặng có thể bị phạt từ 6.000.000 – 8.000.000 đồng, tước giấy phép lái xe 22 – 24 tháng. Giải thích: Điều khiển xe mô tô khi có nồng độ cồn ở mức cao, theo khoản 8 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_006",
+        "question": "Tôi uống rượu rồi ngồi ghế lái ô tô, nổ máy bật điều hòa nhưng xe đứng yên. Như vậy có bị coi là vi phạm không?",
+        "ground_truth": "Có thể bị coi là vi phạm, nếu xác định người đó đang trong trạng thái điều khiển phương tiện, dù xe đứng yên. Mức phạt: Phạt tiền 6.000.000 – 8.000.000 đồng, tước giấy phép lái xe 10 – 12 tháng. Giải thích: Người ngồi ghế lái, nổ máy khi xe đang dừng vẫn được coi là đang điều khiển phương tiện theo khái niệm người điều khiển tại Điều 2 và quy định về dừng xe tại Điều 18 Luật Trật tự, an toàn giao thông đường bộ 2024; khi có nồng độ cồn thì áp dụng điểm c khoản 6 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_007",
+        "question": "Tôi uống bia rồi dắt xe máy đi bộ qua chốt kiểm tra, không ngồi lên xe. Trường hợp này xử lý thế nào?",
+        "ground_truth": "Không xử phạt lỗi nồng độ cồn đối với xe máy. Mức phạt: Không áp dụng xử phạt nồng độ cồn. Giải thích: Người dắt xe không được xem là người điều khiển phương tiện, mà được xác định là người đi bộ, căn cứ theo Điều 2 Luật Trật tự, an toàn giao thông đường bộ 2024 (giải thích từ ngữ). Do không phải chủ thể “điều khiển xe cơ giới”, nên không áp dụng các quy định xử phạt nồng độ cồn đối với xe máy theo Nghị định 168/2024/NĐ-CP"
+    },
+    {
+        "id": "q_008",  
+        "question": "Tôi uống rượu, ngồi sau xe máy và liên tục chỉ đường cho người lái. Tôi có bị phạt không?",
+        "ground_truth": "Không bị xử phạt về nồng độ cồn. Mức phạt: Không áp dụng. Giải thích: Theo Điều 2 Luật Trật tự, an toàn giao thông đường bộ 2024, chỉ người trực tiếp điều khiển phương tiện mới là chủ thể của hành vi “điều khiển phương tiện tham gia giao thông”. Người ngồi sau, dù có chỉ đường hay trao đổi, không được coi là người điều khiển, nên không thuộc đối tượng bị xử phạt nồng độ cồn theo Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_009",
+        "question": "Tôi uống bia rồi đi xe đạp điện trên đường làng. Trường hợp này xử lý như xe đạp hay xe máy?",
+        "ground_truth": "Xử lý theo nhóm phương tiện được xếp loại trong luật, không hoàn toàn như xe đạp thường. Mức phạt: Phạt tiền tùy loại xe được xác định. Giải thích: Việc xác định xe đạp điện thuộc loại phương tiện nào phải căn cứ quy định phân loại phương tiện tại Luật Trật tự, an toàn giao thông đường bộ 2024, sau đó mới áp dụng điều khoản xử phạt tương ứng của Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_010",
+        "question": "Tôi uống rượu rồi lái xe máy trong sân nhà mình, không ra đường công cộng. Có bị xử phạt giao thông không?",
+        "ground_truth": "Không bị xử phạt theo quy định giao thông đường bộ. Mức phạt: Không áp dụng. Giải thích: Luật giao thông chỉ điều chỉnh hành vi xảy ra trong phạm vi đường bộ và khu vực giao thông công cộng, theo Điều 2 Luật Trật tự, an toàn giao thông đường bộ 2024."
+    },
+    {
+        "id": "q_011",
+        "question": "Tôi lái ô tô trên đường vắng, không để ý nên chạy nhanh hơn quy định một chút. Trường hợp này xử lý thế nào?",
+        "ground_truth": "Có vi phạm và bị xử phạt. Mức phạt: Phạt tiền 800.000 – 1.000.000 đồng. Giải thích: Người điều khiển ô tô chạy quá tốc độ cho phép, hành vi vi phạm quy định về tốc độ tại Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, mức phạt áp dụng theo khoản 3 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_012",
+        "question": "Tôi lái ô tô trên quốc lộ, dù có biển báo nhưng vẫn cố chạy rất nhanh cho kịp giờ. Như vậy bị phạt ra sao?",
+        "ground_truth": "Bị xử phạt nặng. Mức phạt: Phạt tiền 12.000.000 – 14.000.000 đồng. Giải thích: Chạy ô tô vượt quá tốc độ cho phép ở mức cao, vi phạm Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, xử phạt theo khoản 7 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_013",
+        "question": "Tôi đi xe máy, không để ý biển báo nên chạy nhanh hơn quy định. Có bị phạt không?",
+        "ground_truth": "Có. Mức phạt: Phạt tiền 800.000 – 1.000.000 đồng. Giải thích: Điều khiển xe mô tô chạy quá tốc độ cho phép, vi phạm quy định tại Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, xử phạt theo khoản 4 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_014",
+        "question": "Tôi chạy xe máy rất nhanh trong khu đông dân cư vì nghĩ đường quen. Trường hợp này thế nào?",
+        "ground_truth": "Bị xử phạt nghiêm khắc. Mức phạt: Phạt tiền 6.000.000 – 8.000.000 đồng, tước giấy phép lái xe 2 – 4 tháng. Giải thích: Chạy xe mô tô vượt quá tốc độ cho phép ở mức cao, vi phạm Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, xử phạt theo khoản 8 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_015",
+        "question": "Tôi đạp xe rất nhanh trong khu chợ đông người, làm người khác phải tránh. Có bị xử lý không?",
+        "ground_truth": "Có thể bị xử phạt. Mức phạt: Phạt tiền 100.000 – 200.000 đồng. Giải thích: Người điều khiển xe thô sơ không chấp hành quy định an toàn giao thông, vi phạm nguyên tắc bảo đảm an toàn tại Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, xử phạt theo khoản 1 Điều 9 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_016",
+        "question": "Tôi chạy băng qua đường rất nhanh, làm xe khác phải phanh gấp. Có bị phạt không?",
+        "ground_truth": "Có. Mức phạt: Phạt tiền 150.000 – 250.000 đồng. Giải thích: Người đi bộ gây cản trở, nguy hiểm cho giao thông, vi phạm quy tắc an toàn giao thông đường bộ tại Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, xử phạt theo khoản 1 Điều 10 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_018",
+        "question": "Tôi chạy xe máy đua theo bạn trên đường, tốc độ rất cao nhưng chưa gây tai nạn. Xử lý thế nào?",
+        "ground_truth": "Bị xử phạt nặng. Mức phạt: Phạt tiền 800.000 – 1.000.000 đồng, tước giấy phép lái xe 2 – 4 tháng. Giải thích: Điều khiển xe mô tô chạy quá tốc độ, gây nguy hiểm, vi phạm Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, xử phạt theo khoản 4 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_019",
+        "question": "Ban đêm ít xe nên tôi lái ô tô nhanh trong khu dân cư. Có bị phạt không?",
+        "ground_truth": "Có. Mức phạt: Phạt tiền 4.000.000 – 6.000.000 đồng, tước giấy phép lái xe 1 – 3 tháng. Giải thích: Chạy ô tô vượt tốc độ trong khu vực đông dân cư, vi phạm Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, xử phạt theo khoản 5 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_020",
+        "question": "Con tôi đạp xe rất nhanh trên đường làng, suýt va vào người khác. Trường hợp này xử lý ra sao?",
+        "ground_truth": "Có thể bị nhắc nhở hoặc xử phạt theo quy định. Mức phạt: Phạt tiền 100.000 – 200.000 đồng (nếu đủ điều kiện xử phạt). Giải thích: Người điều khiển xe thô sơ không bảo đảm an toàn giao thông, vi phạm nguyên tắc tại Điều 12 Luật Trật tự, an toàn giao thông đường bộ 2024, xử phạt theo khoản 1 Điều 9 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_022",
+        "question": "Tôi lái xe con đi trong phố, nghĩ là đi chậm nên không thắt dây an toàn. Bị công an vẫy vào thì có bị phạt không?",
+        "ground_truth": "Có. Mức phạt: Phạt tiền từ 800.000 đồng đến 1.000.000 đồng. Giải thích: Luật quy định người lái xe và người được chở trên xe ô tô phải thắt dây đai an toàn tại những chỗ có trang bị. Hành vi không thắt dây an toàn khi điều khiển xe chạy trên đường bị xử phạt theo Điểm k Khoản 3 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_023",
+        "question": "Đêm hôm qua lúc 11h đêm tôi lái xe qua khu dân cư, có bấm còi \"tin tin\" để xin vượt cho an toàn. Tự nhiên bị phạt, tôi sai ở đâu?",
+        "ground_truth": "Bạn sai vì sử dụng còi trong thời gian cấm. Mức phạt: Phạt tiền từ 400.000 đồng đến 600.000 đồng. Giải thích: Luật cấm sử dụng còi từ 22 giờ ngày hôm trước đến 05 giờ ngày hôm sau trong khu đông dân cư. Hành vi này vi phạm quy tắc giao thông và bị xử phạt theo Điểm đ Khoản 1 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_024",
+        "question": "Tôi đi bộ lên đường cao tốc để bắt xe khách cho tiện thì có bị cấm không? Nếu phạt thì bao nhiêu?",
+        "ground_truth": "Bị cấm và sẽ bị phạt. Mức phạt: Phạt tiền từ 400.000 đồng đến 600.000 đồng. Giải thích: Người đi bộ không được đi vào đường cao tốc (trừ người phục vụ quản lý, bảo trì). Hành vi đi vào đường cao tốc trái phép bị xử phạt theo Điểm a Khoản 2 Điều 10 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_025",
+        "question": "Tôi đi xe máy, thấy đèn đỏ còn 2 giây nữa là sang xanh nên tôi vọt qua luôn. Thế là bị phạt bao nhiêu?",
+        "ground_truth": "Bị phạt tiền và trừ điểm giấy phép lái xe. Mức phạt: Phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng và bị trừ 04 điểm giấy phép lái xe. Giải thích: Đèn đỏ là cấm đi, việc vượt khi chưa chuyển xanh là không chấp hành hiệu lệnh đèn tín hiệu. Hành vi này đối với xe máy bị xử phạt theo Điểm c Khoản 7 và Điểm b Khoản 13 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_026",
+        "question": "Tôi lỡ đi quá nhà người quen ở đường một chiều nên lùi xe ô tô lại một đoạn để vào nhà. Làm vậy có sao không?",
+        "ground_truth": "Có vi phạm. Mức phạt: Phạt tiền từ 2.000.000 đồng đến 3.000.000 đồng. Giải thích: Luật nghiêm cấm hành vi lùi xe ở đường một chiều. Hành vi này bị xử phạt theo Điểm e Khoản 4 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_027",
+        "question": "Tôi lái xe ô tô 5 chỗ, cho con trai 9 tuổi (cao tầm 1m2) ngồi ghế phụ phía trước ngắm cảnh. Cháu nó thắt dây an toàn đầy đủ rồi thì có bị phạt không?",
+        "ground_truth": "Có. Mức phạt: Phạt tiền từ 800.000 đồng đến 1.000.000 đồng và bị trừ 02 điểm giấy phép lái xe. Giải thích: Dù có thắt dây an toàn, Luật quy định trẻ em dưới 10 tuổi và chiều cao dưới 1,35 mét không được ngồi cùng hàng ghế với người lái xe (trừ xe chỉ có 1 hàng ghế). Vi phạm này bị xử phạt theo Điểm m Khoản 3 và Điểm a Khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_028",
+        "question": "Đang lái ô tô đi làm, tôi nghe tiếng còi cứu thương phía sau nhưng đường đông quá tôi cứ đi bình thường không nhường. Như vậy phạt bao nhiêu?",
+        "ground_truth": "Phạt nặng và bị trừ điểm bằng lái. Mức phạt: Phạt tiền từ 6.000.000 đồng đến 8.000.000 đồng và bị trừ 04 điểm giấy phép lái xe. Giải thích: Khi có tín hiệu của xe ưu tiên, người tham gia giao thông phải giảm tốc độ, đi sát lề đường hoặc dừng lại để nhường đường. Hành vi không nhường đường hoặc gây cản trở xe ưu tiên bị xử phạt theo Điểm b Khoản 6 và Điểm b Khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_029",
+        "question": "Tôi uống rượu xong lái ô tô về, thổi nồng độ cồn lên 0,55 mg/l khí thở. Mức này phạt kịch khung chưa và bị giữ bằng bao lâu?",
+        "ground_truth": "Đã chạm mức kịch khung (mức cao nhất). Mức phạt: Phạt tiền từ 30.000.000 đồng đến 40.000.000 đồng, tước quyền sử dụng giấy phép lái xe từ 22 tháng đến 24 tháng và bị trừ 10 điểm giấy phép lái xe. Giải thích: Luật nghiêm cấm điều khiển phương tiện mà trong hơi thở có nồng độ cồn. Với kết quả 0,55 mg/l (vượt quá 0,4 mg/l), bạn bị xử phạt theo mức cao nhất quy định tại Điểm a Khoản 11, Điểm c Khoản 15 và Điểm d Khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_030",
+        "question": "Tôi chạy xe máy chở cái tủ lạnh phía sau, đo ra thì nó thừa ra khỏi giá đèo hàng mỗi bên tầm 40cm. Công an bảo tôi chở hàng cồng kềnh, phạt bao nhiêu?",
+        "ground_truth": "Phạt tiền từ 600.000 đồng đến 800.000 đồng. Giải thích: Luật quy định xe mô tô không được xếp hàng hóa vượt quá chiều rộng giá đèo hàng về mỗi bên 0,3 mét (30cm). Việc bạn chở thừa ra 40cm là vi phạm. Hành vi xếp hàng hóa trên xe quá giới hạn quy định/mang vác vật cồng kềnh bị xử phạt theo Điểm e Khoản 3 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_031",
+        "question": "Tôi lái máy xúc đi vào cao tốc Hà Nội - Hải Phòng để đến công trường cho nhanh. Xe tôi chạy tối đa được có 35km/h thôi. Bị công an giữ lại, lỗi này phạt thế nào?",
+        "ground_truth": "Phạt tiền từ 14.000.000 đồng đến 16.000.000 đồng, đồng thời có thể bị tước quyền sử dụng chứng chỉ bồi dưỡng/giấy phép lái xe. Giải thích: Luật quy định xe máy chuyên dùng có tốc độ thiết kế nhỏ hơn tốc độ tối thiểu của đường cao tốc không được đi vào đường cao tốc. Với tốc độ tối đa 35km/h (thường thấp hơn tốc độ tối thiểu của cao tốc là 60km/h), việc đi vào là vi phạm. Hành vi này bị xử phạt theo Điểm b Khoản 8 Điều 8 Nghị định 168/2024/NĐ-CP. Được, tôi đã thay thế hoàn toàn các câu hỏi về tốc độ bằng các chủ đề khác như: nồng độ cồn, thiết bị an toàn cho trẻ em, quy định trên cao tốc, sử dụng đèn, và các quy tắc đặc thù khác. Dưới đây là bộ 10 câu hỏi mới (5 đơn giản, 5 phức tạp) đã loại bỏ yếu tố tốc độ, kết hợp dữ liệu từ Luật Trật tự, an toàn giao thông đường bộ 2024 và Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_032",
+        "question": "Tôi lái xe máy, đang đi thì có tin nhắn nên tôi lấy điện thoại ra cầm tay để xem bản đồ và trả lời tin nhắn. Như vậy phạt bao nhiêu?",
+        "ground_truth": "Bị phạt tiền và tước bằng lái. Mức phạt: Phạt tiền từ 800.000 đồng đến 1.000.000 đồng, tước quyền sử dụng giấy phép lái xe từ 01 tháng đến 03 tháng (áp dụng hình thức phạt bổ sung chung hoặc cụ thể theo quy định xử lý vi phạm hành chính). Giải thích: Luật nghiêm cấm hành vi dùng tay cầm và sử dụng điện thoại khi điều khiển phương tiện đang di chuyển. Hành vi này đối với xe mô tô/xe gắn máy bị xử phạt theo Điểm đ Khoản 4 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_033",
+        "question": "Tôi lái ô tô đi làm lúc 7 giờ tối, trời đã tối hẳn nhưng tôi quên bật đèn chiếu sáng (đèn pha/cos). Tôi bị phạt thế nào?",
+        "ground_truth": "Bị phạt tiền và trừ điểm bằng lái. Mức phạt: Phạt tiền từ 800.000 đồng đến 1.000.000 đồng và bị trừ 02 điểm giấy phép lái xe. Giải thích: Luật quy định phải bật đèn chiếu sáng trong thời gian từ 18 giờ ngày hôm trước đến 06 giờ ngày hôm sau. Hành vi không sử dụng đèn chiếu sáng trong thời gian này bị xử phạt theo Điểm g Khoản 3 và Điểm a Khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_034",
+        "question": "Tôi đi xe máy chở bạn ngồi sau. Tôi có đội mũ bảo hiểm nhưng bạn tôi thì không. Cảnh sát giao thông dừng xe phạt ai và phạt bao nhiêu?",
+        "ground_truth": "Phạt người điều khiển xe (là bạn). Mức phạt: Phạt tiền từ 400.000 đồng đến 600.000 đồng. Giải thích: Luật quy định người lái xe và người được chở trên xe mô tô phải đội mũ bảo hiểm. Hành vi chở người ngồi trên xe không đội mũ bảo hiểm bị xử phạt theo Điểm i Khoản 2 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_035",
+        "question": "Tôi lái ô tô đến ngã tư, đèn đỏ còn 3 giây nữa mới chuyển sang xanh nhưng tôi vội quá nên đi luôn. Mức phạt là bao nhiêu?",
+        "ground_truth": "Phạt tiền nặng và trừ điểm bằng lái. Mức phạt: Phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng và bị trừ 04 điểm giấy phép lái xe. Đính chính: Đối với ô tô, hành vi vượt đèn đỏ bị phạt ở mức cao hơn (Khoản 9), cụ thể: Mức phạt chính xác: Phạt tiền từ 18.000.000 đồng đến 20.000.000 đồng và bị trừ 10 điểm giấy phép lái xe. Giải thích: Đèn đỏ là cấm đi. Hành vi không chấp hành hiệu lệnh của đèn tín hiệu giao thông đối với ô tô bị xử phạt theo Điểm b Khoản 9 và Điểm d Khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_036",
+        "question": "Tôi dán đề can hình cánh bướm che lấp một phần biển số xe máy cho đẹp. Biển số vẫn nhìn thấy số nhưng hơi bị che một chút thì có sao không?",
+        "ground_truth": "Vẫn bị phạt. Mức phạt: Phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng. Giải thích: Luật nghiêm cấm hành vi dán, che lấp làm thay đổi chữ, số, hình dạng biển số xe. Hành vi điều khiển xe gắn biển số bị che lấp đối với xe máy bị xử phạt theo Điểm b Khoản 3 Điều 14 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_037",
+        "question": "Xe ô tô của bạn tôi bị hỏng phanh (mất thắng). Tôi dùng xe bán tải của mình để kéo xe của bạn về xưởng sửa chữa bằng một sợi dây cáp vải chịu lực rất chắc chắn. Cả hai xe đều có người ngồi lái để điều hướng. Kéo xe như vậy có bị phạt không?",
+        "ground_truth": "Có, bạn sẽ bị phạt tiền từ 800.000 đồng đến 1.000.000 đồng và bị trừ 02 điểm giấy phép lái xe. Theo điểm b khoản 1 Điều 29 Luật Trật tự, an toàn giao thông đường bộ 2024, trường hợp hệ thống hãm (phanh) của xe được kéo không còn hiệu lực thì xe kéo nhau bắt buộc phải nối bằng thanh nối cứng. Việc dùng dây cáp mềm trong trường hợp này là vi phạm quy định về an toàn khi kéo xe, bị xử phạt theo điểm h khoản 3 và điểm a khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_038",
+        "question": "Tôi lái xe ô tô con 5 chỗ, chở con trai tôi năm nay 9 tuổi, cháu cao 1 mét 30. Vì cháu hay say xe nên tôi cho cháu ngồi ghế phụ phía trước cạnh tôi và có thắt dây an toàn đầy đủ. Tôi làm vậy có vi phạm luật không?",
+        "ground_truth": "Có vi phạm và bị phạt tiền từ 800.000 đồng đến 1.000.000 đồng, trừ 02 điểm giấy phép lái xe. Khoản 3 Điều 10 Luật Trật tự, an toàn giao thông đường bộ 2024 quy định khi chở trẻ em dưới 10 tuổi và chiều cao dưới 1,35 mét trên xe ô tô không được cho trẻ em ngồi cùng hàng ghế với người lái xe, trừ loại xe ô tô chỉ có một hàng ghế. Con bạn thỏa mãn cả 2 điều kiện này nên không được ngồi ghế trước. Hành vi này bị xử phạt theo điểm m khoản 3 và điểm a khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_039",
+        "question": "Tôi lái xe ô tô trong thành phố vào buổi tối, đường có đèn đường sáng trưng. Do mắt kém nên tôi bật đèn pha (chiếu xa) để nhìn biển báo cho rõ. Tôi đi chậm và không gây tai nạn, như vậy có bị Cảnh sát giao thông phạt không?",
+        "ground_truth": "Có, bạn bị phạt tiền từ 800.000 đồng đến 1.000.000 đồng và trừ 02 điểm giấy phép lái xe. Điểm b khoản 2 Điều 20 Luật Trật tự, an toàn giao thông đường bộ 2024 bắt buộc người lái xe phải tắt đèn chiếu xa, bật đèn chiếu gần khi đi trên các đoạn đường qua khu đông dân cư có hệ thống chiếu sáng đang hoạt động. Hành vi bật đèn pha trong trường hợp này là trái luật và bị xử phạt theo điểm b khoản 3 và điểm a khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_040",
+        "question": "Tôi đi xe máy tay ga (xe SH) vào đường cao tốc Hà Nội - Hải Phòng. Xe tôi chạy rất khỏe, có thể đi trên 80km/h, đạt tốc độ tối thiểu của cao tốc. Tôi đi vào như vậy có đúng luật không?",
+        "ground_truth": "Không đúng luật, bạn sẽ bị phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng và bị trừ 06 điểm giấy phép lái xe. Khoản 3 Điều 25 Luật Trật tự, an toàn giao thông đường bộ 2024 quy định xe mô tô, xe gắn máy không được đi trên đường cao tốc (trừ xe phục vụ việc quản lý, bảo trì đường cao tốc), bất kể xe đó chạy được tốc độ bao nhiêu. Hành vi này bị xử phạt theo điểm b khoản 7 và điểm c khoản 13 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_041",
+        "question": "Nhà có việc gấp chở người đi cấp cứu, tôi dùng xe ô tô cá nhân của mình nhưng lắp thêm một đèn chớp màu đỏ trên nóc xe và bật đèn khẩn cấp để xin đường cho nhanh. Tôi làm vậy để cứu người thì có bị phạt lỗi gì không?",
+        "ground_truth": "Vẫn bị phạt lỗi lắp đặt thiết bị ưu tiên trái phép với mức phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng, bị tịch thu thiết bị phát tín hiệu ưu tiên và trừ 02 điểm giấy phép lái xe. Xe ô tô cá nhân không thuộc danh mục \"xe ưu tiên\" (như xe cứu thương, xe chữa cháy...) theo định nghĩa tại khoản 1 Điều 27 Luật Trật tự, an toàn giao thông đường bộ 2024 và khoản 24 Điều 9 Luật này nghiêm cấm hành vi lắp đặt, sử dụng thiết bị phát tín hiệu ưu tiên không đúng quy định. Hành vi tự ý lắp đèn ưu tiên bị phạt theo điểm e khoản 5, điểm a khoản 15 và điểm a khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP. Dưới đây là 10 câu hỏi \"Hard Mode\" (Mức độ khó) tiếp theo. Các câu hỏi này tiếp tục đi sâu vào các tình huống thực tế, yêu cầu xác định đúng/sai dựa trên Luật Trật tự, an toàn giao thông đường bộ 2024 và mức phạt tương ứng theo Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_042",
+        "question": "Tôi lái xe ô tô đi qua cầu Chương Dương. Thấy đi nhầm đường nên tôi quay đầu xe ngay trên cầu để đi ngược lại. Tôi bật xi-nhan đầy đủ và không gây tắc đường, như vậy có bị phạt không?",
+        "ground_truth": "Có, bạn sẽ bị phạt tiền từ 2.000.000 đồng đến 3.000.000 đồng và bị trừ 02 điểm giấy phép lái xe. Theo khoản 4 Điều 15 Luật Trật tự, an toàn giao thông đường bộ 2024, hành vi quay đầu xe trên cầu là bị nghiêm cấm (trừ khi có hiệu lệnh của người điều khiển giao thông hoặc biển báo tạm thời). Hành vi quay đầu xe trên cầu bị xử phạt theo điểm i khoản 4 và điểm a khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_043",
+        "question": "Tôi lái xe ô tô trên đường phố, do đường đông nên tôi lấn sang làn đường ngược chiều một đoạn để vượt lên, đoạn này có dải phân cách cứng ở giữa nhưng thấp, tôi cho xe leo qua dải phân cách đó luôn. Tôi bị phạt thế nào?",
+        "ground_truth": "Bị phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng và bị trừ 02 điểm giấy phép lái xe. Theo điểm b khoản 5 Điều 6 Nghị định 168/2024/NĐ-CP, hành vi \"điều khiển xe đi qua dải phân cách cố định ở giữa hai phần đường xe chạy\" là vi phạm quy tắc sử dụng làn đường quy định tại Điều 13 Luật Trật tự, an toàn giao thông đường bộ 2024. Mức trừ điểm áp dụng theo điểm a khoản 16 Điều 6 Nghị định này."
+    },
+    {
+        "id": "q_044",
+        "question": "Tôi ngồi trên xe ô tô và ném một túi rác ra ngoài cửa sổ xuống đường phố cho tiện. Hành vi này có bị phạt không và phạt bao nhiêu?",
+        "ground_truth": "Có, bạn bị phạt tiền từ 10.000.000 đồng đến 15.000.000 đồng và bị trừ 02 điểm giấy phép lái xe. Theo khoản 20 Điều 9 Luật Trật tự, an toàn giao thông đường bộ 2024, hành vi đổ, xả thải gây mất an toàn giao thông là bị nghiêm cấm. Tại khoản 4 và khoản 5 Điều 17 Nghị định 168/2024/NĐ-CP, hành vi người điều khiển xe đổ trái phép rác ra đường phố bị phạt mức tiền nêu trên và bị trừ điểm giấy phép lái xe."
+    },
+    {
+        "id": "q_045",
+        "question": "Tôi mua một bộ biển số xe ô tô \"ngũ quý\" trên mạng để lắp vào xe chạy cho oai. Cảnh sát giao thông phát hiện thì tôi bị xử lý thế nào?",
+        "ground_truth": "Bạn bị phạt tiền từ 20.000.000 đồng đến 26.000.000 đồng, bị tịch thu biển số giả và bị trừ 10 điểm giấy phép lái xe. Khoản 17 Điều 9 Luật Trật tự, an toàn giao thông đường bộ 2024 nghiêm cấm hành vi sử dụng biển số xe không do cơ quan có thẩm quyền cấp. Hành vi điều khiển xe gắn biển số không do cơ quan có thẩm quyền cấp bị xử phạt theo điểm a khoản 8, điểm a khoản 10 và điểm c khoản 13 Điều 13 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_046",
+        "question": "Tôi đi xe máy (xe tay ga), vì tắc đường nên tôi leo lên vỉa hè để đi cho nhanh. Tôi đi chậm và không va chạm với ai, như vậy có đúng luật không?",
+        "ground_truth": "Không đúng luật, bạn sẽ bị phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng và bị trừ 04 điểm giấy phép lái xe. Theo điểm a khoản 1 Điều 30 Luật Trật tự, an toàn giao thông đường bộ 2024, vỉa hè dành cho người đi bộ (trừ trường hợp đi qua vỉa hè để vào nhà). Hành vi điều khiển xe đi trên vỉa hè bị xử phạt theo điểm a khoản 7 và điểm b khoản 13 Điều 7 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_047",
+        "question": "Tôi lái xe ô tô đến ngã tư, đèn vàng đã bật sáng nhưng tôi cố nhấn ga vượt qua vạch dừng vì sợ chờ lâu. Tôi có bị coi là vượt đèn đỏ không và phạt bao nhiêu?",
+        "ground_truth": "Có, bạn bị phạt lỗi không chấp hành hiệu lệnh đèn tín hiệu (vượt đèn vàng/đỏ đều phạt như nhau). Mức phạt tiền từ 18.000.000 đồng đến 20.000.000 đồng và bị trừ 04 điểm giấy phép lái xe. Theo khoản 4 Điều 11 Luật Trật tự, an toàn giao thông đường bộ 2024, tín hiệu vàng là phải dừng lại trước vạch dừng. Hành vi này bị xử phạt theo điểm b khoản 9 và điểm b khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_048",
+        "question": "Tôi là chủ xe ô tô, tôi giao xe cho con trai 17 tuổi (chưa đủ tuổi lấy bằng lái ô tô) lái thử ra đường vắng tập lái. Tôi ngồi ngay cạnh hướng dẫn thì có bị phạt không?",
+        "ground_truth": "Vẫn bị phạt. Bạn là chủ xe sẽ bị phạt tiền từ 8.000.000 đồng đến 10.000.000 đồng (nếu là cá nhân). Theo khoản 7 Điều 9 Luật Trật tự, an toàn giao thông đường bộ 2024, nghiêm cấm giao xe cho người không đủ điều kiện điều khiển. Con bạn 17 tuổi chưa đủ tuổi lái ô tô (phải 18 tuổi). Hành vi giao xe này bị xử phạt theo khoản 10 Điều 32 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_049",
+        "question": "Đang lái xe trên đường cao tốc thì bị tắc đường, tôi đánh lái sang làn dừng xe khẩn cấp để chạy cho nhanh. Tôi làm vậy có vi phạm không?",
+        "ground_truth": "Có vi phạm. Mức phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng và bị trừ 02 điểm giấy phép lái xe. Theo điểm c khoản 1 Điều 25 Luật Trật tự, an toàn giao thông đường bộ 2024, không được cho xe chạy ở làn dừng xe khẩn cấp. Hành vi này bị xử phạt theo điểm d khoản 5 và điểm a khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_050",
+        "question": "Xe tôi là xe bán tải, tôi cho 2 người bạn ngồi trên thùng xe phía sau để di chuyển một đoạn ngắn trong phố cho mát. Xe đi chậm, an toàn. Như vậy có bị cấm không?",
+        "ground_truth": "Bị cấm và sẽ bị phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng, trừ 06 điểm giấy phép lái xe. Theo khoản 1 Điều 28 Luật Trật tự, an toàn giao thông đường bộ 2024, chỉ được chở người trên thùng xe tải trong các trường hợp đặc biệt (cứu nạn, thiên tai, diễu hành...); trường hợp đi chơi không thuộc diện cho phép. Hành vi chở người trên thùng xe trái quy định bị xử phạt theo điểm p khoản 5 và điểm c khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_051",
+        "question": "Tôi lái ô tô đi đến ngã tư, thấy đèn xanh nên tôi rẽ phải. Tuy nhiên lúc đó có người đi bộ đang đi trên vạch kẻ đường dành cho người đi bộ. Tôi bóp còi và cứ thế rẽ, không dừng lại nhường đường. Tôi có sai không?",
+        "ground_truth": "Bạn sai. Mức phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng và bị trừ 02 điểm giấy phép lái xe. Theo điểm a khoản 4 Điều 11 Luật Trật tự, an toàn giao thông đường bộ 2024, khi đèn xanh, người lái xe được đi nhưng phải giảm tốc độ hoặc dừng lại nhường đường cho người đi bộ qua đường. Hành vi chuyển hướng không nhường quyền đi trước cho người đi bộ bị xử phạt theo điểm l khoản 5 và điểm a khoản 16 Điều 6 Nghị định 168/2024/NĐ-CP."
+    },
+    {
+        "id": "q_052",
+        "question": "Nhà tôi ở ngay sát đường tàu. Để tiện đi lại sang bên kia đường thăm người thân, tôi đã tự kê vài tấm ván gỗ chắc chắn để làm lối đi qua đường sắt. Tôi chỉ đi bộ qua đó chứ không chạy xe máy, như vậy có được phép không?",
+        "ground_truth": "Không được phép, đây là hành vi bị nghiêm cấm. Giải thích: Theo khoản 18 Điều 3 Luật Đường sắt, lối đi tự mở là đoạn đường bộ giao nhau đồng mức với đường sắt do cá nhân tự xây dựng khi chưa được cơ quan có thẩm quyền cho phép. Khoản 2 Điều 6 Luật này quy định nghiêm cấm hành vi \"tự mở lối đi qua đường sắt khi chưa được cơ quan có thẩm quyền cho phép\"."
+    },
+    {
+        "id": "q_053",
+        "question": "Tôi là lái tàu hỏa. Tối hôm qua tôi có uống vài ly rượu, sáng nay đo nồng độ cồn trong hơi thở vẫn còn một chút nhưng tôi cảm thấy rất tỉnh táo. Tôi có được phép điều khiển tàu chạy không?",
+        "ground_truth": "Tuyệt đối không. Giải thích: Theo khoản 7 Điều 6 Luật Đường sắt, pháp luật nghiêm cấm \"nhân viên đường sắt trong khi làm nhiệm vụ mà trong máu hoặc hơi thở có nồng độ cồn\". Do đó, dù bạn cảm thấy tỉnh táo nhưng có nồng độ cồn thì vẫn không được phép điều khiển tàu."
+    },
+    {
+        "id": "q_054",
+        "question": "Thấy tàu hỏa đang chạy tới, tôi muốn thử cảm giác mạnh nên đã đứng ra giữa đường ray vẫy áo đỏ để báo hiệu dừng tàu, dù phía trước không có sự cố gì cả. Tàu đã phải phanh gấp. Tôi làm vậy có vi phạm luật không?",
+        "ground_truth": "Có, bạn đã vi phạm điều cấm của Luật Đường sắt. Giải thích: Khoản 4 Điều 6 Luật Đường sắt nghiêm cấm hành vi \"tự ý báo hiệu hoặc sử dụng các thiết bị để dừng tàu, trừ trường hợp phát hiện có sự cố gây mất an toàn giao thông đường sắt\". Việc bạn dừng tàu khi không có sự cố là trái pháp luật."
+    },
+    {
+        "id": "q_055",
+        "question": "Công ty tôi vừa hoàn thành xây dựng một tuyến đường sắt đô thị (Metro) mới. Chúng tôi đã chạy thử kỹ thuật thấy ổn nên định đưa vào khai thác chở khách ngay để kịp ngày lễ, sau đó mới làm thủ tục chứng nhận an toàn hệ thống sau. Làm vậy có đúng quy trình không?",
+        "ground_truth": "Không đúng, tuyến đường sắt chưa được phép hoạt động. Giải thích: Theo khoản 1 Điều 4 Thông tư quy định về đánh giá, chứng nhận an toàn hệ thống đối với đường sắt đô thị (Văn bản hợp nhất 15/VBHN-BGTVT), đường sắt đô thị xây dựng mới \"trước khi đưa vào khai thác phải được Tổ chức chứng nhận đánh giá, chứng nhận an toàn hệ thống, Cục Đường sắt Việt Nam cấp Giấy chứng nhận thẩm định hồ sơ an toàn hệ thống\"."
+    },
+    {
+        "id": "q_056",
+        "question": "Tuyến Metro số 1 đã vận hành được 4 năm. Do bận rộn và thấy tàu vẫn chạy tốt nên đơn vị vận hành chưa thực hiện đánh giá, chứng nhận định kỳ hệ thống quản lý an toàn lần nào. Như vậy có vi phạm quy định không?",
+        "ground_truth": "Có vi phạm quy định về kiểm tra định kỳ. Giải thích: Theo khoản 1 Điều 13 Thông tư quy định về đánh giá, chứng nhận an toàn hệ thống đối với đường sắt đô thị, sau 36 tháng (3 năm) kể từ ngày đưa vào vận hành, hệ thống quản lý an toàn vận hành phải được kiểm tra, chứng nhận định kỳ lần đầu. Việc vận hành đến 4 năm mà chưa đánh giá là sai quy định."
+    },
+    {
+        "id": "q_057",
+        "question": "Tuyến đường sắt đô thị của thành phố tôi đang hoạt động bình thường. Nay chúng tôi muốn nâng cấp, thay đổi toàn bộ hệ thống thông tin - tín hiệu điều khiển chạy tàu sang công nghệ mới hiện đại hơn. Chúng tôi có cần phải thực hiện đánh giá an toàn hệ thống lại từ đầu không?",
+        "ground_truth": "Có, bắt buộc phải đánh giá và thẩm định lại. Giải thích: Theo khoản 2 Điều 4 Thông tư quy định về đánh giá, chứng nhận an toàn hệ thống đối với đường sắt đô thị, khi nâng cấp đường sắt đô thị phải được đánh giá, chứng nhận an toàn hệ thống và thẩm định hồ sơ. Nội dung nâng cấp bao gồm \"thay đổi hệ thống thông tin - tín hiệu điều khiển chạy tàu\"."
+    },
+    {
+        "id": "q_058",
+        "question": "Tôi lái xe tải đi qua đường ngang giao cắt với đường sắt. Không may xe tôi bị chết máy ngay giữa đường ray và tàu đang tới. Tôi đã bỏ xe chạy thoát thân mà không báo hiệu gì cho tàu. Tôi có trách nhiệm gì trong trường hợp này không?",
+        "ground_truth": "Bạn đã vi phạm trách nhiệm khi xảy ra sự cố. Giải thích: Theo khoản 1 Điều 54 Luật Đường sắt, người phát hiện sự cố có khả năng gây cản trở, mất an toàn (như xe chết máy trên ray) có trách nhiệm \"kịp thời báo cho ga đường sắt... hoặc thực hiện ngay các biện pháp báo hiệu dừng tàu\" trong trường hợp khẩn cấp. Ngoài ra, khoản 3 Điều 54 quy định tổ chức, cá nhân gây sự cố cản trở phải bị xử lý và bồi thường thiệt hại."
+    },
+    {
+        "id": "q_059",
+        "question": "Tôi có một mảnh đất nằm trong hành lang an toàn giao thông đường sắt. Tôi muốn xây một cái kho chứa đồ tạm thời ở đó, không kiên cố. Tôi có được phép xây dựng không?",
+        "ground_truth": "Không được phép (trừ trường hợp đặc biệt được cấp phép). Giải thích: Khoản 2 Điều 6 Luật Đường sắt nghiêm cấm hành vi \"lấn, chiếm hành lang an toàn giao thông đường sắt\". Theo khoản 3 Điều 44, chỉ một số công trình thiết yếu (quốc phòng, an ninh...) hoặc đường gom mới được phép xây dựng trong phạm vi này và phải tuân thủ điều kiện nghiêm ngặt. Việc tự ý xây kho chứa đồ là vi phạm."
+    },
+    {
+        "id": "q_060",
+        "question": "Tôi là nhân viên lái tàu đã có kinh nghiệm 10 năm lái tàu hàng. Nay công ty chuyển tôi sang lái tàu khách trên cùng tuyến đường đó. Tôi có cần phải xin cấp lại hay bổ sung giấy phép lái tàu không, hay dùng giấy cũ là được?",
+        "ground_truth": "Bạn phải tuân thủ quy định về giấy phép lái tàu phù hợp. Giải thích: Theo khoản 2 Điều 48 Luật Đường sắt, người điều khiển phương tiện giao thông đường sắt phải có giấy phép lái tàu theo quy định của Bộ trưởng Bộ Xây dựng (trong văn bản này ghi là Bộ Xây dựng, dù thực tế thường là Bộ GTVT, nhưng tôi trích dẫn theo nguồn). Giấy phép lái tàu thường được cấp theo loại phương tiện và loại tàu cụ thể, bạn cần kiểm tra quy định chi tiết của Bộ trưởng để đảm bảo giấy phép hiện tại phù hợp với loại tàu mới."
+    },
+    {
+        "id": "q_061",
+        "question": "Tôi thấy vụ tai nạn đường sắt xảy ra, có người bị thương nằm bên đường. Tôi đang lái xe ô tô con đi qua đó, xe còn chỗ trống nhưng tôi sợ rắc rối nên lái xe đi luôn. Tôi có vi phạm luật không?",
+        "ground_truth": "Có, bạn đã không thực hiện trách nhiệm cứu giúp người bị nạn. Giải thích: Theo khoản 3 Điều 53 Luật Đường sắt, người điều khiển phương tiện giao thông khác khi đi qua nơi xảy ra tai nạn giao thông đường sắt \"có trách nhiệm chở người bị nạn đi cấp cứu, trừ trường hợp đang làm nhiệm vụ khẩn cấp\". Hành vi bỏ đi là vi phạm nghĩa vụ này."
+    },
+    {
+        "id": "q_062",
+        "question": "Tôi là thuyền trưởng tàu chở hàng. Trong bữa trưa tôi có uống một lon bia cho mát. Khi Cảnh sát đường thủy kiểm tra, nồng độ cồn của tôi đo được là thấp (dưới 50 miligam/100 mililít máu). Tôi vẫn tỉnh táo để lái tàu, như vậy có bị phạt không?",
+        "ground_truth": "Có, bạn vẫn bị phạt tiền từ 3.000.000 đồng đến 5.000.000 đồng. Khoản 8 Điều 8 Luật Giao thông đường thủy nội địa nghiêm cấm thuyền viên, người lái phương tiện đang làm việc trên phương tiện mà trong máu hoặc hơi thở có nồng độ cồn. Dù mức cồn thấp (chưa vượt quá 50 miligam/100 mililít máu), hành vi này vẫn bị xử phạt theo điểm a khoản 3 Điều 21 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_063",
+        "question": "Tôi đi đò ngang để sang sông. Chủ đò đưa áo phao cho tôi mặc nhưng tôi thấy nóng và vướng víu nên kiên quyết không mặc. Tôi là khách đi đò thì có bị phạt không?",
+        "ground_truth": "Có, bạn sẽ bị phạt tiền từ 1.000.000 đồng đến 2.000.000 đồng. Theo khoản 3 Điều 79 Luật Giao thông đường thủy nội địa, hành khách phải tuyệt đối tuân theo sự hướng dẫn của thuyền trưởng, người lái phương tiện. Hành vi không mặc áo phao cứu sinh hoặc không mang dụng cụ nổi cứu sinh cá nhân khi đi trên phương tiện ngang sông bị xử phạt trực tiếp đối với hành khách theo khoản 3 Điều 34 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_064",
+        "question": "Nhà tôi ở ven sông, tôi có giăng một lưới đánh cá chắn ngang luồng tàu chạy vào ban đêm để bắt cá. Tôi có treo đèn báo hiệu đàng hoàng. Làm vậy có vi phạm luật không?",
+        "ground_truth": "Có vi phạm và bạn bị phạt tiền từ 1.000.000 đồng đến 3.000.000 đồng, đồng thời bị buộc tháo dỡ lưới. Khoản 4 Điều 8 Luật Giao thông đường thủy nội địa cấm đặt cố định ngư cụ, phương tiện khai thác, nuôi trồng thủy sản trên luồng. Hành vi đặt ngư cụ khai thác thủy sản gây cản trở giao thông bị xử phạt theo điểm a khoản 1 và điểm a khoản 3 Điều 13 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_065",
+        "question": "Tôi lái tàu chở cát, do muốn chở được nhiều nên tôi đã chất hàng làm cho tàu chìm xuống nước, ngập qua \"vạch dấu mớn nước an toàn\" khoảng 10cm (chưa đến mức nguy hiểm). Tàu tôi vẫn chạy tốt, không sao cả. Như vậy phạt bao nhiêu?",
+        "ground_truth": "Bạn bị phạt tiền từ 500.000 đồng đến 1.000.000 đồng và buộc phải hạ tải số hàng quá mức. Khoản 7 Điều 8 Luật Giao thông đường thủy nội địa nghiêm cấm hành vi chở hàng hóa quá vạch dấu mớn nước an toàn. Hành vi chở hàng hóa quá vạch dấu mớn nước an toàn đến 1/5 chiều cao mạn khô của phương tiện bị xử phạt theo khoản 1 và khoản 5 Điều 38 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_066",
+        "question": "Tôi đang lái tàu chở khách du lịch. Có một hành khách năn nỉ nhờ tôi chở giúp một bình gas lớn (loại 12kg) về nhà để nấu ăn. Tôi để bình gas ở khoang hành lý chung với khách. Tôi làm vậy có sai không?",
+        "ground_truth": "Hành vi này là sai và bị phạt tiền từ 1.000.000 đồng đến 2.000.000 đồng. Điểm c khoản 3 Điều 78 Luật Giao thông đường thủy nội địa quy định không được chở hàng hóa dễ cháy, dễ nổ chung với hành khách. Hành vi chở hàng hóa dễ cháy, nổ chung với hành khách trên phương tiện bị xử phạt theo điểm đ khoản 2 Điều 32 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_067",
+        "question": "Tôi lái tàu và gây ra một vụ va chạm nhỏ làm chìm một chiếc ghe. Do hoảng sợ và sợ bị người dân đánh nên tôi đã lái tàu bỏ chạy khỏi hiện trường, không ở lại cứu người. Mức phạt cho hành vi bỏ chạy này là bao nhiêu?",
+        "ground_truth": "Bạn bị phạt tiền từ 60.000.000 đồng đến 75.000.000 đồng. Khoản 9 Điều 8 Luật Giao thông đường thủy nội địa nghiêm cấm hành vi bỏ trốn sau khi gây tai nạn để trốn tránh trách nhiệm. Hành vi gây tai nạn mà bỏ trốn (nhưng chưa đến mức truy cứu trách nhiệm hình sự) bị xử phạt theo khoản 5 Điều 24 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_068",
+        "question": "Tôi là chủ một chiếc sà lan chở hàng. Hôm nay tôi mệt nên giao cho con trai tôi 17 tuổi cầm lái thay tôi một đoạn đường vắng. Tôi có bị phạt không?",
+        "ground_truth": "Có, bạn bị phạt tiền từ 5.000.000 đồng đến 10.000.000 đồng. Khoản 5a Điều 8 Luật Giao thông đường thủy nội địa cấm giao phương tiện cho người không đủ điều kiện điều khiển phương tiện tham gia giao thông đường thủy nội địa. Hành vi giao phương tiện cho người không đủ điều kiện về tuổi, không có giấy chứng nhận khả năng chuyên môn điều khiển phương tiện bị xử phạt theo điểm a khoản 1 Điều 20 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_069",
+        "question": "Tôi muốn vượt một tàu khác đang đi cùng chiều phía trước. Tôi thấy bên trái trống nên tôi tăng tốc vượt lên luôn mà không phát âm hiệu (còi) hay tín hiệu gì cả vì nghĩ ban ngày họ tự nhìn thấy. Tôi có vi phạm không?",
+        "ground_truth": "Có vi phạm. Mức phạt tiền từ 500.000 đồng đến 1.000.000 đồng (đối với phương tiện nhỏ) hoặc cao hơn tùy loại phương tiện. Điểm a khoản 1 Điều 42 Luật Giao thông đường thủy nội địa quy định phương tiện xin vượt phải phát âm hiệu một tiếng dài, lặp lại nhiều lần. Hành vi không phát tín hiệu hoặc phát tín hiệu không đúng quy định khi vượt nhau bị xử phạt theo điểm đ khoản 1 Điều 25 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_070",
+        "question": "Tôi là chủ bến thủy nội địa chở khách. Do khách đông nên tôi kê thêm ghế nhựa để chở thêm người, số lượng khách vượt quá sức chở của tàu là 10 người (trong khi sức chở cho phép là 40 người). Tôi bị phạt thế nào?",
+        "ground_truth": "Bạn bị phạt tiền từ 200.000 đồng đến 500.000 đồng trên mỗi người vượt quá. Khoản 7 Điều 8 Luật Giao thông đường thủy nội địa nghiêm cấm hành vi chở quá sức chở người của phương tiện. Đối với người quản lý khai thác bến thủy nội địa, hành vi để hành khách xuống phương tiện vượt quá sức chở bị xử phạt theo điểm a khoản 1 Điều 30 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_071",
+        "question": "Tôi dọn vệ sinh boong tàu và xúc toàn bộ bùn đất, rác thải sinh hoạt đổ thẳng xuống sông cho sạch tàu. Sông rộng thế này chắc không sao chứ?",
+        "ground_truth": "Bạn bị phạt tiền từ 5.000.000 đồng đến 7.000.000 đồng. Khoản 4 Điều 8 Luật Giao thông đường thủy nội địa cấm đổ đất, đá, cát, sỏi hoặc chất thải khác xuống sông. Hành vi để bùn, đất, đá, cát, sỏi hoặc chất thải khác rơi, trôi xuống vùng nước đường thủy nội địa bị xử phạt theo khoản 4 Điều 11 Nghị định 139/2021/NĐ-CP."
+    },
+    {
+        "id": "q_072",
+        "question": "Tôi mua lại một con tàu biển cũ và muốn đặt tên mới cho tàu là Cảnh sát biển 01 để thể hiện sự uy nghiêm thì có được phép không",
+        "ground_truth": "Không được phép và bạn sẽ bị phạt tiền từ 30.000.000 đồng đến 50.000.000 đồng. Theo khoản 2 Điều 21 Bộ luật Hàng hải Việt Nam, không được sử dụng tên cơ quan nhà nước, đơn vị lực lượng vũ trang để làm tên tàu biển (trừ trường hợp có sự chấp thuận của cơ quan đó). Hành vi tự ý đặt tên tàu biển không đúng quy định này bị xử phạt theo khoản 1 Điều 8 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải và buộc phải đổi lại tên đúng quy định."
+    },
+    {
+        "id": "q_073",
+        "question": "Tôi là thuyền trưởng đang điều động tàu cập cầu cảng nhưng do đau bụng đột xuất nên tôi đã giao quyền chỉ huy cho đại phó rồi xuống buồng nghỉ ngơi thì có bị phạt không",
+        "ground_truth": "Có, bạn bị phạt tiền từ 8.000.000 đồng đến 10.000.000 đồng. Theo khoản 9 Điều 53 Bộ luật Hàng hải Việt Nam, thuyền trưởng có nghĩa vụ trực tiếp điều khiển tàu biển khi tàu đến, rời cảng hoặc hoạt động trong vùng nước cảng biển. Hành vi điều động tàu thuyền cập cầu cảng mà thuyền trưởng không có mặt ở buồng lái theo quy định bị xử phạt theo điểm a khoản 5 Điều 33 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_074",
+        "question": "Để thuận tiện cho việc xin việc làm trên tàu biển tôi đã mua một bằng thuyền trưởng giả và sử dụng nó để làm việc thì mức phạt là bao nhiêu",
+        "ground_truth": "Bạn bị phạt tiền từ 20.000.000 đồng đến 30.000.000 đồng và bị tịch thu bằng thuyền trưởng giả. Theo khoản 2 Điều 59 Bộ luật Hàng hải Việt Nam, thuyền viên làm việc trên tàu biển phải có đủ chứng chỉ chuyên môn theo quy định. Hành vi sử dụng chứng chỉ chuyên môn không do cơ quan có thẩm quyền cấp (bằng giả) để làm việc trên tàu bị xử phạt theo điểm a khoản 4 Điều 42 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_075",
+        "question": "Tôi là hoa tiêu hàng hải đang dẫn tàu vào cảng nhưng thuyền trưởng kiên quyết không nghe theo chỉ dẫn của tôi nên tôi tức giận tự ý rời tàu ngay lập tức mà không cần thuyền trưởng đồng ý thì có sao không",
+        "ground_truth": "Bạn đã vi phạm và bị phạt tiền từ 4.000.000 đồng đến 6.000.000 đồng. Theo khoản 4 Điều 251 Bộ luật Hàng hải Việt Nam, hoa tiêu hàng hải không được phép rời tàu nếu không có sự đồng ý của thuyền trưởng. Hành vi tự ý rời tàu khi chưa có sự đồng ý của thuyền trưởng bị xử phạt theo điểm e khoản 1 Điều 45 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_076",
+        "question": "Tôi đang lái tàu hàng thì thấy một tàu cá gần đó phát tín hiệu cấp cứu nhưng do tàu tôi đang chở hàng gấp cần giao đúng giờ nên tôi đã lờ đi và chạy tiếp thì có bị phạt nặng không",
+        "ground_truth": "Có, bạn bị phạt tiền từ 20.000.000 đồng đến 40.000.000 đồng và bị tước quyền sử dụng Giấy chứng nhận khả năng chuyên môn thuyền trưởng từ 03 đến 06 tháng. Theo khoản 2 Điều 122 Bộ luật Hàng hải Việt Nam, tàu thuyền khi phát hiện tín hiệu cấp cứu phải bằng mọi cách tiến hành cứu giúp nếu điều kiện cho phép. Hành vi không thực hiện nghĩa vụ tìm kiếm, cứu nạn hàng hải theo quy định bị xử phạt theo điểm a khoản 2 Điều 53 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_077",
+        "question": "Tôi là ngư dân và tôi mang lồng bè ra đặt ở vùng nước cảng biển để nuôi trồng thủy sản cho thuận tiện việc vận chuyển nhưng chưa xin phép Cảng vụ thì có vi phạm không",
+        "ground_truth": "Có vi phạm và bị phạt tiền từ 5.000.000 đồng đến 10.000.000 đồng, đồng thời buộc phải di dời lồng bè. Theo khoản 12 Điều 12 Bộ luật Hàng hải Việt Nam, nghiêm cấm việc khai thác trái phép trong phạm vi vùng nước cảng biển. Hành vi đặt lồng bè nuôi trồng thủy sản trong vùng nước cảng biển khi chưa được sự chấp thuận của Cảng vụ hàng hải bị xử phạt theo điểm e khoản 1 Điều 12 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_078",
+        "question": "Tôi đứng trên boong tàu đang neo đậu tại cảng và vứt một túi rác sinh hoạt cá nhân xuống nước biển cho sạch tàu thì có bị xử lý không",
+        "ground_truth": "Có, bạn bị phạt tiền từ 3.000.000 đồng đến 5.000.000 đồng. Theo khoản 6 Điều 12 Bộ luật Hàng hải Việt Nam, nghiêm cấm hành vi gây ô nhiễm môi trường. Hành vi đổ rác hoặc vứt các đồ vật khác từ tàu xuống nước hoặc cầu cảng bị xử phạt theo điểm d khoản 1 Điều 58b Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_079",
+        "question": "Tôi là chủ tàu đã bán con tàu đang khai thác cho người khác và chấm dứt hợp đồng với các thuyền viên nhưng tôi từ chối chi trả tiền vé máy bay và chi phí cho họ về nước thì phạt bao nhiêu",
+        "ground_truth": "Bạn bị phạt tiền từ 60.000.000 đồng đến 80.000.000 đồng và buộc phải cung cấp kinh phí cho thuyền viên hồi hương. Theo khoản 1 Điều 66 Bộ luật Hàng hải Việt Nam, chủ tàu có trách nhiệm bố trí và thanh toán chi phí hồi hương cho thuyền viên khi bán tàu. Hành vi không cung cấp kinh phí cho thuyền viên hồi hương theo quy định bị xử phạt theo điểm b khoản 2 Điều 48 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_080",
+        "question": "Tàu của tôi vào cảng biển và Cảng vụ yêu cầu phải sử dụng tàu lai dắt hỗ trợ nhưng tôi thấy tàu mình hiện đại tự đi được nên kiên quyết không thuê tàu lai dắt thì có bị phạt không",
+        "ground_truth": "Có, bạn bị phạt tiền từ 40.000.000 đồng đến 50.000.000 đồng và bị tước quyền sử dụng Giấy chứng nhận khả năng chuyên môn thuyền trưởng từ 01 đến 03 tháng. Theo Điều 256 Bộ luật Hàng hải Việt Nam và các quy định về an toàn hàng hải, tàu thuyền phải sử dụng tàu lai dắt trong các trường hợp bắt buộc. Hành vi không sử dụng tàu lai dắt, hỗ trợ theo quy định bị xử phạt theo khoản 6 Điều 37 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_081",
+        "question": "Tôi là thợ lặn tự do và tôi tự ý lặn xuống vùng nước cảng biển để trục vớt sắt vụn mà không xin phép Cảng vụ hàng hải thì mức phạt là bao nhiêu",
+        "ground_truth": "Bạn bị phạt tiền từ 8.000.000 đồng đến 10.000.000 đồng. Theo Điều 12 Bộ luật Hàng hải Việt Nam, nghiêm cấm các hành vi gây mất an toàn hàng hải. Hành vi tiến hành các hoạt động mò, lặn hoặc công việc ngầm dưới nước tại vùng nước cảng biển khi chưa được phép của Cảng vụ hàng hải bị xử phạt theo điểm b khoản 5 Điều 33 Nghị định xử phạt vi phạm hành chính trong lĩnh vực hàng hải."
+    },
+    {
+        "id": "q_082",
+        "question": "Tôi đang đi trên máy bay và thấy thèm thuốc quá nên trốn vào nhà vệ sinh để hút thuốc lá điện tử vì nghĩ rằng khói thuốc điện tử không gây báo cháy thì có bị phạt không",
+        "ground_truth": "Có, bạn sẽ bị phạt tiền từ 3.000.000 đồng đến 5.000.000 đồng. Theo khoản 1 Điều 56 Dự thảo Luật Hàng không dân dụng Việt Nam, hành khách có nghĩa vụ thực hiện các quy định về bảo đảm an toàn, an ninh hàng không. Hành vi hút thuốc, kể cả thuốc lá điện tử trên tàu bay là hành vi uy hiếp an toàn và bị xử phạt theo điểm a khoản 2 Điều 8 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_083",
+        "question": "Nhà tôi ở gần sân bay, tối đến tôi dùng đèn laze chiếu lên trời trêu đùa máy bay đang chuẩn bị hạ cánh xem cho vui mắt thì có vi phạm pháp luật không",
+        "ground_truth": "Hành vi này là vi phạm pháp luật và bị phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng. Khoản 5 Điều 12 Dự thảo Luật Hàng không dân dụng Việt Nam nghiêm cấm lắp đặt, sử dụng các loại đèn, ký hiệu, tín hiệu làm ảnh hưởng đến việc tàu bay cất cánh, hạ cánh. Hành vi sử dụng đèn laze, thiết bị chiếu sáng khác trái quy định gây ảnh hưởng đến hoạt động bay bị xử phạt theo điểm b khoản 3 Điều 21 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_084",
+        "question": "Tôi mượn thẻ kiểm soát an ninh của bạn tôi đang làm việc tại sân bay để đi vào khu vực cách ly tiễn người thân cho tình cảm thì mức phạt là bao nhiêu",
+        "ground_truth": "Bạn bị phạt tiền từ 3.000.000 đồng đến 5.000.000 đồng. Hành vi sử dụng thẻ kiểm soát an ninh hàng không của người khác để vào khu vực hạn chế của cảng hàng không, sân bay bị xử phạt theo điểm a khoản 2 Điều 25 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_085",
+        "question": "Máy bay đang đậu ở sân để đón khách, thấy trong khoang nóng bức và bí bách nên tôi tự ý mở cửa thoát hiểm để hóng gió cho thoáng thì có sao không",
+        "ground_truth": "Bạn đã vi phạm nghiêm trọng quy định an toàn và bị phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng. Khoản 9 Điều 12 Dự thảo Luật Hàng không dân dụng Việt Nam nghiêm cấm hành gây vi gây nguy hiểm trong quá trình bay. Hành vi mở cửa của tàu bay khi không được phép bị xử phạt theo điểm a khoản 3 Điều 8 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_086",
+        "question": "Khi làm thủ tục check-in tại sân bay, tôi nói đùa với nhân viên hàng không là trong hành lý của tôi có bom để trêu chọc họ thì bị xử lý như thế nào",
+        "ground_truth": "Bạn sẽ bị phạt tiền từ 15.000.000 đồng đến 20.000.000 đồng. Điểm g khoản 1 Điều 94 Dự thảo Luật Hàng không dân dụng Việt Nam xác định việc cung cấp thông tin sai đến mức uy hiếp an toàn là hành vi can thiệp bất hợp pháp. Hành vi tung tin hoặc cung cấp thông tin sai về việc có bom, mìn, vật liệu nổ gây ảnh hưởng đến hoạt động bình thường của hàng không dân dụng (nhưng chưa đến mức truy cứu trách nhiệm hình sự) bị xử phạt theo điểm a khoản 7 Điều 26 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_087",
+        "question": "Tôi là tiếp viên hàng không, trước giờ bay 1 tiếng tôi có uống một lon bia cho đỡ khát và nghĩ rằng tửu lượng mình tốt nên không say thì có được phép làm việc không",
+        "ground_truth": "Không được phép và bạn sẽ bị phạt tiền từ 5.000.000 đồng đến 10.000.000 đồng. Khoản 14 Điều 12 Dự thảo Luật Hàng không dân dụng Việt Nam nghiêm cấm nhân viên hàng không thực hiện nhiệm vụ mà trong cơ thể có nồng độ cồn. Hành vi uống rượu, bia trong giờ làm việc hoặc có nồng độ cồn trong hơi thở, trong máu khi thực hiện nhiệm vụ bị xử phạt theo điểm e khoản 4 Điều 16 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_088",
+        "question": "Tôi xây dựng một cột ăng ten thu phát sóng rất cao tại khu đất nhà mình nằm ngay sát đường cất hạ cánh của sân bay mà không xin phép thì có bị phạt không",
+        "ground_truth": "Có, bạn bị phạt tiền từ 10.000.000 đồng đến 20.000.000 đồng và buộc phải tháo dỡ công trình. Khoản 4 Điều 12 Dự thảo Luật Hàng không dân dụng Việt Nam nghiêm cấm xây dựng các công trình ảnh hưởng đến an toàn bay. Hành vi xây dựng, lắp đặt các công trình, thiết bị kỹ thuật vi phạm giới hạn chướng ngại vật hàng không ngoài cảng hàng không, sân bay bị xử phạt theo điểm a khoản 3 Điều 21 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_089",
+        "question": "Công ty tôi mua vài chiếc trực thăng và tự ý tổ chức bán vé các chuyến bay chở khách du lịch ngắm cảnh mà chưa được cấp giấy phép kinh doanh vận chuyển hàng không thì phạt bao nhiêu",
+        "ground_truth": "Công ty bạn bị phạt tiền từ 60.000.000 đồng đến 70.000.000 đồng. Khoản 2 Điều 16 Dự thảo Luật Hàng không dân dụng Việt Nam quy định người khai thác tàu bay chỉ được cung cấp dịch vụ vận chuyển hàng không thương mại sau khi được cấp giấy chứng nhận. Hành vi vận chuyển hành khách vì mục đích thương mại mà không có Giấy phép kinh doanh vận chuyển hàng không bị xử phạt theo khoản 7 Điều 24 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_090",
+        "question": "Do bị hoãn chuyến bay quá lâu khiến tôi lỡ công việc, tôi tức giận đập phá làm hư hỏng biển báo thông tin chuyến bay tại nhà ga thì bị xử lý ra sao",
+        "ground_truth": "Bạn bị phạt tiền từ 5.000.000 đồng đến 10.000.000 đồng. Khoản 8 Điều 12 Dự thảo Luật Hàng không dân dụng Việt Nam nghiêm cấm hành vi phá hủy, gây hư hại, làm biến dạng các thiết bị nhận biết, vật bảo vệ tại cảng hàng không. Hành vi di chuyển, hủy hoại, gây hư hại bảng hiệu, thiết bị nhận biết cảng hàng không (chưa đến mức truy cứu trách nhiệm hình sự) bị xử phạt theo điểm a khoản 2 Điều 9 Nghị định 09/VBHN-BGTVT."
+    },
+    {
+        "id": "q_091",
+        "question": "Khi máy bay đang cất cánh, tiếp viên đã nhắc nhở tắt thiết bị điện tử nhưng tôi vẫn cố tình bật điện thoại di động để livestream cảnh máy bay cất cánh thì có bị phạt không",
+        "ground_truth": "Có, bạn bị phạt tiền từ 3.000.000 đồng đến 5.000.000 đồng. Khoản 1 Điều 56 Dự thảo Luật Hàng không dân dụng Việt Nam yêu cầu hành khách phải thực hiện các quy định về bảo đảm an toàn hàng không. Hành vi sử dụng thiết bị điện tử, thiết bị thu phát sóng trên tàu bay khi không được phép bị xử phạt theo điểm b khoản 2 Điều 8 Nghị định 09/VBHN-BGTVT."
+    }
+]

@@ -376,17 +376,14 @@ def main():
     
     # Get API key from args or env
     api_key = args.gemini_api_key or os.environ.get("GOOGLE_API_KEY")
-    print(api_key)
-    if not api_key:
-        print("Warning: No Gemini API key provided. Set --gemini_api_key or GOOGLE_API_KEY env.")
-    
+
     # Init RAG system
     rag_system = ContextRAG(
         chroma_dir=args.chroma_dir,
         collection_name=args.collection_name,
         gemini_api_key=api_key,
         gemini_model=args.gemini_model,
-        use_rerank=not args.no_rerank,
+        use_rerank=False,
     )
     
     # Test question

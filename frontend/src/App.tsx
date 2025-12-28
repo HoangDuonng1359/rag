@@ -236,10 +236,6 @@ function App() {
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">
                   Chào mừng đến với Graph RAG Chat!
                 </h2>
-                <p className="text-gray-600 max-w-md mb-6">
-                  Hỏi tôi bất kỳ câu hỏi nào về luật giao thông Việt Nam. 
-                  Tôi sử dụng Graph RAG để cung cấp câu trả lời chính xác và có căn cứ.
-                </p>
 
                 {/* Example questions */}
                 <div className="mt-10 max-w-2xl">
